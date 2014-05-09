@@ -3,14 +3,14 @@ Terminvereinbarungssystem
 Es soll ein kollaboratives Terminvereinbarungssystem (ähnlich wie Doodle) erstellt werden, in dem sich Benutzer koordinieren können. Folgende Anforderungen sollen dabei erfüllt werden:
 
 Benutzer
-* Neue Benutzer k�nnen sich registrieren
-* Existierende Benutzer k�nnen sich einloggen
+* Neue Benutzer können sich registrieren
+* Existierende Benutzer können sich einloggen
 * Man kann nach registrierten Benutzern im System suchen (Über ihren Namen).
 * Ein Benutzer kann gleichzeitig ein Organisator und Teilnehmer sein.
 * Jeder Benutzer kann sich die Events, die er organisiert, oder Events, an denen er teilnimmt, anzeigen lassen.
 
 Organisator
-* ist ein Benutzer, der Events mit Namen und mehreren Termin- und Zeitvorschl�gen erstellt und die Einladungen an einige registrierte Benutzer schickt
+* ist ein Benutzer, der Events mit Namen und mehreren Termin- und Zeitvorschlägen erstellt und die Einladungen an einige registrierte Benutzer schickt
 * darf den Namen, die Termine und Zeiten eines Events ändern, aber nur bevor sich einer der Benutzer zu dem Event angemeldet hat
 * darf neue Benutzer zu seinen Events zusätzlich einladen
 * darf eingeladene Benutzer wieder löschen, bevor sich diese zu dem Event angemeldet haben
