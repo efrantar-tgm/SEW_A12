@@ -1,0 +1,7 @@
+Programmiersprache: PHP
+DBMS:               MySQL
+ORM:                Propel
+User Management:    UserCake
+Front-end:          Bootstrap
+testing:            gremlin.js, php-unit, Selenium
+
