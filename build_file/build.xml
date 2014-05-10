@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="SEW_A12" default="help">
+	<property file="build.properties" />
+
+	<target name="help">
+		<echo msg="		phing copy: all php-files were pushed on the Server (via ftp)" />
+		<echo msg="		phing test: executes all testcases, generates a html-report and pushes them on the server" />
+	</target>
+
+	<!-- fileset -->
+	<fileset id="php" dir="./src/" >
+		<include name="*.php" />
+	</fileset>
+
+	<!-- files pushen via ftp -->
+	<target name="copy">
+		<ftpdeploy host="${host}" port="${port}" username="${user}" password="${password}" dir="public_html" mode="ascii" clearfirst="true">
+			<fileset refid="php" />
+		</ftpdeploy>
+	</target>
+	
+	<!-- fileset including all testcases --> 
+	<fileset id="testset" dir="./src_test/" >
+		<include name="*.php" />
+	</fileset>
+
+	<!-- test execution and html-report generation -->
+	<target name="test">
+		<phpunit haltonfailure="true" printsummary="true">
+			<formatter type="xml" todir="./test/" outfile="logfile.xml"/>					
+			<batchtest>
+				<fileset refid="testset" />
+			</batchtest>
+		</phpunit>
+		<phpunitreport infile="./test/logfile.xml" format="frames" todir="./test/report" />
+	</target>
+</project>
