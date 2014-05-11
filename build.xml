@@ -20,7 +20,7 @@
 	</target>
 	
 	<!-- fileset including all testcases --> 
-	<fileset id="testset" dir="./src_test/" >
+	<fileset id="testset" dir="./src/test/" >
 		<include name="*.php" />
 	</fileset>
 
