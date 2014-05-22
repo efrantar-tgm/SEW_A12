@@ -145,8 +145,9 @@ require_once("models/header.php");
 echo "
 <body>
 <div id='wrapper'>
+<div id='top'><div id='logo'></div></div>
 <div id='content'>
-<h1>Das Große Ganze</h1>
+<h1>UserCake</h1>
 <h2>Admin User</h2>
 <div id='left-nav'>";
 

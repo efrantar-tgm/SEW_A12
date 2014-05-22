@@ -85,6 +85,7 @@ require_once("models/header.php");
 echo "
 <body>
 <div id='wrapper'>
+<div id='top'><div id='logo'></div></div>
 <div id='content'>
 <h1>Das große Ganze</h1>
 <h2>Login</h2>

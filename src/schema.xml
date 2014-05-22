@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This is the Propel database-schema for the SEW_A12-project -->
+
+<database name="SEW_A12" defaultIdMethod="native">
+	<table name="users" phpName="User">
+		<column name="name" type="varchar" required="true" primaryKey="true" />
+	</table>
+
+	<table name="events" phpName="Event">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="varchar" required="true" />
+		<column name="fixed" type="boolean" />
+	</table>
+
+	<table name="dateOptions" phpName="DateOption">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+	 	<column name="date" type="date" required="true" />
+		<column name="fixed" type="boolean" />
+
+		<column name="eventId" type="integer" required="true" />
+		<foreign-key foreignTable="events">
+    	<reference local="eventId" foreign="id" />
+  	</foreign-key>
+	</table>
+
+	<table name="invitations" phpName="Invitation" isCrossRef="true">
+		<column name="role" type="integer" required="true" />
+
+		<column name="userName" type="varchar" required="true" primaryKey="true" />
+		<foreign-key foreignTable="users" onDelete="cascade">
+			<reference local="userName" foreign="name" />
+		</foreign-key>
+
+		<column name="eventId" type="integer" required="true" primaryKey="true" />
+		<foreign-key foreignTable="events" onDelete="cascade">
+			<reference local="eventId" foreign="id" />		
+		</foreign-key>
+	</table>
+
+</database>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is the Propel runtime-configuration for the Einladungsverwaltungs-application -->
+
+<config>
+  <propel>
+    <datasources default="zum_wohle_aller">
+      <datasource id="zum_wohle_aller">
+        <adapter>mysql</adapter> <!-- sqlite, mysql, mssql, oracle, or pgsql -->
+        <connection>
+          <dsn>mysql:host=localhost;dbname=SEW_A12</dsn>
+          <user>SEW_user</user>
+          <password>password</password>
+        </connection>
+      </datasource>
+    </datasources>
+  </propel>
+</config>

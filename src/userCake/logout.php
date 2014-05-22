@@ -19,17 +19,16 @@ if(!empty($websiteUrl))
 	
 	if(strpos($websiteUrl,"http://") === false)
 	{
-		$add_http = "http://dienesch.at";
+		$add_http = "http://";
 	}
 	
-	header("Location: /sew/userCake/login.php");
+	header("Location: http://192.168.120.133/SEW_A12");
 	die();
 }
 else
 {
-	header("Location: /sew/userCake/login.php");
+	header("Location: http://192.168.120.133/SEW_A12");
 	die();
 }	
 
 ?>
-
