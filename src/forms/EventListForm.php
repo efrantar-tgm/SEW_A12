@@ -1,16 +1,31 @@
 <link href="../../style/style.css" rel="stylesheet" type="text/css" />
 <?php
 
+/**
+ * Lists all events fetched from the database
+ *
+ * @author jakobsaxinger
+ * @version 23-05-2014 (dd:mm:yyyy)
+ */
 class EventListForm {
 
 	var $my_events;
 	var $invited;
 
+	/*
+	 * Constructor
+	 *
+	 * @param event
+	 * @param event
+	 */
 	public function __construct($my_events, $invited) {
 		$this->my_events = $my_events;
 		$this->invited = $invited;
 	}
-
+	
+	/*
+	 * Shows all fetched Events
+	 */
 	public function show(){
 	
 		echo "<div class='header'> Meine Events </div>
@@ -20,7 +35,7 @@ class EventListForm {
 		for($e = 0; $e < count($this->my_events) ; $e++){
 			echo '<table width="50%">
 				  	<td class="zelle">
-						<div class="event" style="color: #584A84;">'.$this->my_events[$e].'</div>
+						<div class="event" style="color: #584A84;">'.$this->my_events[$e]->getName().'</div>
 					</td>
 					</table>
 			
@@ -38,7 +53,7 @@ class EventListForm {
 		for($i = 0; $i < count($this->invited) ; $i++){
 			echo '<table width="50%" border="1px" bordercolor="#FFFFFF">
 				  	<td class="zelle">
-						<div class="event" style="color: #54A34A;">'.$this->invited[$i].'</div>
+						<div class="event" style="color: #54A34A;">'.$this->invited[$i]->getName().'</div>
 					</td>
 					</table>
 			
