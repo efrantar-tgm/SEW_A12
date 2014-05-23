@@ -48,9 +48,9 @@ abstract class BaseInvitation extends BaseObject implements Persistent
     protected $eventid;
 
     /**
-     * @var        User
+     * @var        MyUser
      */
-    protected $aUser;
+    protected $aMyUser;
 
     /**
      * @var        Event
@@ -148,8 +148,8 @@ abstract class BaseInvitation extends BaseObject implements Persistent
             $this->modifiedColumns[] = InvitationPeer::USERNAME;
         }
 
-        if ($this->aUser !== null && $this->aUser->getName() !== $v) {
-            $this->aUser = null;
+        if ($this->aMyUser !== null && $this->aMyUser->getName() !== $v) {
+            $this->aMyUser = null;
         }
 
 
@@ -248,8 +248,8 @@ abstract class BaseInvitation extends BaseObject implements Persistent
     public function ensureConsistency()
     {
 
-        if ($this->aUser !== null && $this->username !== $this->aUser->getName()) {
-            $this->aUser = null;
+        if ($this->aMyUser !== null && $this->username !== $this->aMyUser->getName()) {
+            $this->aMyUser = null;
         }
         if ($this->aEvent !== null && $this->eventid !== $this->aEvent->getId()) {
             $this->aEvent = null;
@@ -293,7 +293,7 @@ abstract class BaseInvitation extends BaseObject implements Persistent
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
+            $this->aMyUser = null;
             $this->aEvent = null;
         } // if (deep)
     }
@@ -413,11 +413,11 @@ abstract class BaseInvitation extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
+            if ($this->aMyUser !== null) {
+                if ($this->aMyUser->isModified() || $this->aMyUser->isNew()) {
+                    $affectedRows += $this->aMyUser->save($con);
                 }
-                $this->setUser($this->aUser);
+                $this->setMyUser($this->aMyUser);
             }
 
             if ($this->aEvent !== null) {
@@ -581,9 +581,9 @@ abstract class BaseInvitation extends BaseObject implements Persistent
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aUser !== null) {
-                if (!$this->aUser->validate($columns)) {
-                    $failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
+            if ($this->aMyUser !== null) {
+                if (!$this->aMyUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aMyUser->getValidationFailures());
                 }
             }
 
@@ -682,8 +682,8 @@ abstract class BaseInvitation extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-                $result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aMyUser) {
+                $result['MyUser'] = $this->aMyUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->aEvent) {
                 $result['Event'] = $this->aEvent->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
@@ -903,13 +903,13 @@ abstract class BaseInvitation extends BaseObject implements Persistent
     }
 
     /**
-     * Declares an association between this object and a User object.
+     * Declares an association between this object and a MyUser object.
      *
-     * @param                  User $v
+     * @param                  MyUser $v
      * @return Invitation The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(User $v = null)
+    public function setMyUser(MyUser $v = null)
     {
         if ($v === null) {
             $this->setUsername(NULL);
@@ -917,10 +917,10 @@ abstract class BaseInvitation extends BaseObject implements Persistent
             $this->setUsername($v->getName());
         }
 
-        $this->aUser = $v;
+        $this->aMyUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
+        // If this object has already been added to the MyUser object, it will not be re-added.
         if ($v !== null) {
             $v->addInvitation($this);
         }
@@ -931,27 +931,27 @@ abstract class BaseInvitation extends BaseObject implements Persistent
 
 
     /**
-     * Get the associated User object
+     * Get the associated MyUser object
      *
      * @param PropelPDO $con Optional Connection object.
      * @param $doQuery Executes a query to get the object if required
-     * @return User The associated User object.
+     * @return MyUser The associated MyUser object.
      * @throws PropelException
      */
-    public function getUser(PropelPDO $con = null, $doQuery = true)
+    public function getMyUser(PropelPDO $con = null, $doQuery = true)
     {
-        if ($this->aUser === null && (($this->username !== "" && $this->username !== null)) && $doQuery) {
-            $this->aUser = UserQuery::create()->findPk($this->username, $con);
+        if ($this->aMyUser === null && (($this->username !== "" && $this->username !== null)) && $doQuery) {
+            $this->aMyUser = MyUserQuery::create()->findPk($this->username, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addInvitations($this);
+                $this->aMyUser->addInvitations($this);
              */
         }
 
-        return $this->aUser;
+        return $this->aMyUser;
     }
 
     /**
@@ -1036,8 +1036,8 @@ abstract class BaseInvitation extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
-            if ($this->aUser instanceof Persistent) {
-              $this->aUser->clearAllReferences($deep);
+            if ($this->aMyUser instanceof Persistent) {
+              $this->aMyUser->clearAllReferences($deep);
             }
             if ($this->aEvent instanceof Persistent) {
               $this->aEvent->clearAllReferences($deep);
@@ -1046,7 +1046,7 @@ abstract class BaseInvitation extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
-        $this->aUser = null;
+        $this->aMyUser = null;
         $this->aEvent = null;
     }
 

@@ -3,7 +3,7 @@
 
 
 /**
- * Skeleton subclass for representing a row from the 'users' table.
+ * Skeleton subclass for performing query and update operations on the 'users' table.
  *
  *
  *
@@ -13,6 +13,6 @@
  *
  * @package    propel.generator.SEW_A12
  */
-class User extends BaseUser
+class MyUserQuery extends BaseMyUserQuery
 {
 }

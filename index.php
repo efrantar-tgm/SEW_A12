@@ -1,3 +1,9 @@
 <?php
-	header('Location: http://192.168.120.133/SEW_A12/src/userCake/index.php');
+/* show all errors */
+error_reporting(E_ALL); 
+ini_set("display_errors", "1");
+
+require_once "src/PropelInit.php"; // load Propel
+
+header("Location: src/userCake/index.php");
 ?>

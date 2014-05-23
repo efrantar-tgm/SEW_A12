@@ -4,6 +4,9 @@ UserCake Version: 2.0.2
 http://usercake.com
 */
 
+error_reporting(E_ALL); 
+ini_set( 'display_errors','1');
+
 require_once("models/config.php");
 require_once("../PropelInit.php");
 

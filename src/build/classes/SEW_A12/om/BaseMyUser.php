@@ -8,18 +8,18 @@
  *
  * @package    propel.generator.SEW_A12.om
  */
-abstract class BaseUser extends BaseObject implements Persistent
+abstract class BaseMyUser extends BaseObject implements Persistent
 {
     /**
      * Peer class name
      */
-    const PEER = 'UserPeer';
+    const PEER = 'MyUserPeer';
 
     /**
      * The Peer class.
      * Instance provides a convenient way of calling static methods on a class
      * that calling code may not be able to identify.
-     * @var        UserPeer
+     * @var        MyUserPeer
      */
     protected static $peer;
 
@@ -93,7 +93,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * Set the value of [name] column.
      *
      * @param  string $v new value
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function setName($v)
     {
@@ -103,7 +103,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
         if ($this->name !== $v) {
             $this->name = $v;
-            $this->modifiedColumns[] = UserPeer::NAME;
+            $this->modifiedColumns[] = MyUserPeer::NAME;
         }
 
 
@@ -152,10 +152,10 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 1; // 1 = UserPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 1; // 1 = MyUserPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating User object", $e);
+            throw new PropelException("Error populating MyUser object", $e);
         }
     }
 
@@ -198,13 +198,13 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(UserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MyUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $stmt = UserPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+        $stmt = MyUserPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
         $row = $stmt->fetch(PDO::FETCH_NUM);
         $stmt->closeCursor();
         if (!$row) {
@@ -237,12 +237,12 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(UserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MyUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = UserQuery::create()
+            $deleteQuery = MyUserQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -280,7 +280,7 @@ abstract class BaseUser extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(UserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(MyUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         $con->beginTransaction();
@@ -300,7 +300,7 @@ abstract class BaseUser extends BaseObject implements Persistent
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserPeer::addInstanceToPool($this);
+                MyUserPeer::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -406,7 +406,7 @@ abstract class BaseUser extends BaseObject implements Persistent
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserPeer::NAME)) {
+        if ($this->isColumnModified(MyUserPeer::NAME)) {
             $modifiedColumns[':p' . $index++]  = '`name`';
         }
 
@@ -510,7 +510,7 @@ abstract class BaseUser extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = UserPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = MyUserPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -542,7 +542,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = UserPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MyUserPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -584,11 +584,11 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['User'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['MyUser'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['User'][$this->getPrimaryKey()] = true;
-        $keys = UserPeer::getFieldNames($keyType);
+        $alreadyDumpedObjects['MyUser'][$this->getPrimaryKey()] = true;
+        $keys = MyUserPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getName(),
         );
@@ -619,7 +619,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = UserPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = MyUserPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
     }
@@ -660,7 +660,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = UserPeer::getFieldNames($keyType);
+        $keys = MyUserPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setName($arr[$keys[0]]);
     }
@@ -672,9 +672,9 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserPeer::DATABASE_NAME);
+        $criteria = new Criteria(MyUserPeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserPeer::NAME)) $criteria->add(UserPeer::NAME, $this->name);
+        if ($this->isColumnModified(MyUserPeer::NAME)) $criteria->add(MyUserPeer::NAME, $this->name);
 
         return $criteria;
     }
@@ -689,8 +689,8 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(UserPeer::DATABASE_NAME);
-        $criteria->add(UserPeer::NAME, $this->name);
+        $criteria = new Criteria(MyUserPeer::DATABASE_NAME);
+        $criteria->add(MyUserPeer::NAME, $this->name);
 
         return $criteria;
     }
@@ -731,7 +731,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of User (or compatible) type.
+     * @param object $copyObj An object of MyUser (or compatible) type.
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -771,7 +771,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * objects.
      *
      * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return User Clone of current object.
+     * @return MyUser Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -791,12 +791,12 @@ abstract class BaseUser extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return UserPeer
+     * @return MyUserPeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new UserPeer();
+            self::$peer = new MyUserPeer();
         }
 
         return self::$peer;
@@ -824,7 +824,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      * @see        addInvitations()
      */
     public function clearInvitations()
@@ -872,7 +872,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
+     * If this MyUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
@@ -889,7 +889,7 @@ abstract class BaseUser extends BaseObject implements Persistent
                 $this->initInvitations();
             } else {
                 $collInvitations = InvitationQuery::create(null, $criteria)
-                    ->filterByUser($this)
+                    ->filterByMyUser($this)
                     ->find($con);
                 if (null !== $criteria) {
                     if (false !== $this->collInvitationsPartial && count($collInvitations)) {
@@ -933,7 +933,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      *
      * @param PropelCollection $invitations A Propel collection.
      * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function setInvitations(PropelCollection $invitations, PropelPDO $con = null)
     {
@@ -946,7 +946,7 @@ abstract class BaseUser extends BaseObject implements Persistent
         $this->invitationsScheduledForDeletion = clone $invitationsToDelete;
 
         foreach ($invitationsToDelete as $invitationRemoved) {
-            $invitationRemoved->setUser(null);
+            $invitationRemoved->setMyUser(null);
         }
 
         $this->collInvitations = null;
@@ -986,7 +986,7 @@ abstract class BaseUser extends BaseObject implements Persistent
             }
 
             return $query
-                ->filterByUser($this)
+                ->filterByMyUser($this)
                 ->count($con);
         }
 
@@ -998,7 +998,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * through the Invitation foreign key attribute.
      *
      * @param    Invitation $l Invitation
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function addInvitation(Invitation $l)
     {
@@ -1024,12 +1024,12 @@ abstract class BaseUser extends BaseObject implements Persistent
     protected function doAddInvitation($invitation)
     {
         $this->collInvitations[]= $invitation;
-        $invitation->setUser($this);
+        $invitation->setMyUser($this);
     }
 
     /**
      * @param	Invitation $invitation The invitation object to remove.
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function removeInvitation($invitation)
     {
@@ -1040,7 +1040,7 @@ abstract class BaseUser extends BaseObject implements Persistent
                 $this->invitationsScheduledForDeletion->clear();
             }
             $this->invitationsScheduledForDeletion[]= clone $invitation;
-            $invitation->setUser(null);
+            $invitation->setMyUser(null);
         }
 
         return $this;
@@ -1050,13 +1050,13 @@ abstract class BaseUser extends BaseObject implements Persistent
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this User is new, it will return
-     * an empty collection; or if this User has previously
+     * Otherwise if this MyUser is new, it will return
+     * an empty collection; or if this MyUser has previously
      * been saved, it will retrieve related Invitations from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in User.
+     * actually need in MyUser.
      *
      * @param Criteria $criteria optional Criteria object to narrow the query
      * @param PropelPDO $con optional connection object
@@ -1077,7 +1077,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      * @see        addEvents()
      */
     public function clearEvents()
@@ -1110,7 +1110,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this User is new, it will return
+     * If this MyUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param Criteria $criteria Optional query object to filter the query
@@ -1126,7 +1126,7 @@ abstract class BaseUser extends BaseObject implements Persistent
                 $this->initEvents();
             } else {
                 $collEvents = EventQuery::create(null, $criteria)
-                    ->filterByUser($this)
+                    ->filterByMyUser($this)
                     ->find($con);
                 if (null !== $criteria) {
                     return $collEvents;
@@ -1146,7 +1146,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      *
      * @param PropelCollection $events A Propel collection.
      * @param PropelPDO $con Optional connection object
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function setEvents(PropelCollection $events, PropelPDO $con = null)
     {
@@ -1188,7 +1188,7 @@ abstract class BaseUser extends BaseObject implements Persistent
                 }
 
                 return $query
-                    ->filterByUser($this)
+                    ->filterByMyUser($this)
                     ->count($con);
             }
         } else {
@@ -1201,7 +1201,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * through the invitations cross reference table.
      *
      * @param  Event $event The Invitation object to relate
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function addEvent(Event $event)
     {
@@ -1228,12 +1228,12 @@ abstract class BaseUser extends BaseObject implements Persistent
     {
         // set the back reference to this object directly as using provided method either results
         // in endless loop or in multiple relations
-        if (!$event->getUsers()->contains($this)) {
+        if (!$event->getMyUsers()->contains($this)) {
             $invitation = new Invitation();
             $invitation->setEvent($event);
             $this->addInvitation($invitation);
 
-            $foreignCollection = $event->getUsers();
+            $foreignCollection = $event->getMyUsers();
             $foreignCollection[] = $this;
         }
     }
@@ -1243,7 +1243,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      * through the invitations cross reference table.
      *
      * @param Event $event The Invitation object to relate
-     * @return User The current object (for fluent API support)
+     * @return MyUser The current object (for fluent API support)
      */
     public function removeEvent(Event $event)
     {
@@ -1318,7 +1318,7 @@ abstract class BaseUser extends BaseObject implements Persistent
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserPeer::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(MyUserPeer::DEFAULT_STRING_FORMAT);
     }
 
     /**

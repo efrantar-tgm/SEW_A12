@@ -6,30 +6,30 @@
  *
  *
  *
- * @method UserQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method MyUserQuery orderByName($order = Criteria::ASC) Order by the name column
  *
- * @method UserQuery groupByName() Group by the name column
+ * @method MyUserQuery groupByName() Group by the name column
  *
- * @method UserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method UserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method UserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method MyUserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method MyUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method MyUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method UserQuery leftJoinInvitation($relationAlias = null) Adds a LEFT JOIN clause to the query using the Invitation relation
- * @method UserQuery rightJoinInvitation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Invitation relation
- * @method UserQuery innerJoinInvitation($relationAlias = null) Adds a INNER JOIN clause to the query using the Invitation relation
+ * @method MyUserQuery leftJoinInvitation($relationAlias = null) Adds a LEFT JOIN clause to the query using the Invitation relation
+ * @method MyUserQuery rightJoinInvitation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Invitation relation
+ * @method MyUserQuery innerJoinInvitation($relationAlias = null) Adds a INNER JOIN clause to the query using the Invitation relation
  *
- * @method User findOne(PropelPDO $con = null) Return the first User matching the query
- * @method User findOneOrCreate(PropelPDO $con = null) Return the first User matching the query, or a new User object populated from the query conditions when no match is found
+ * @method MyUser findOne(PropelPDO $con = null) Return the first MyUser matching the query
+ * @method MyUser findOneOrCreate(PropelPDO $con = null) Return the first MyUser matching the query, or a new MyUser object populated from the query conditions when no match is found
  *
  *
- * @method array findByName(string $name) Return User objects filtered by the name column
+ * @method array findByName(string $name) Return MyUser objects filtered by the name column
  *
  * @package    propel.generator.SEW_A12.om
  */
-abstract class BaseUserQuery extends ModelCriteria
+abstract class BaseMyUserQuery extends ModelCriteria
 {
     /**
-     * Initializes internal state of BaseUserQuery object.
+     * Initializes internal state of BaseMyUserQuery object.
      *
      * @param     string $dbName The dabase name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
@@ -41,25 +41,25 @@ abstract class BaseUserQuery extends ModelCriteria
             $dbName = 'SEW_A12';
         }
         if (null === $modelName) {
-            $modelName = 'User';
+            $modelName = 'MyUser';
         }
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new UserQuery object.
+     * Returns a new MyUserQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
-     * @param   UserQuery|Criteria $criteria Optional Criteria to build the query from
+     * @param   MyUserQuery|Criteria $criteria Optional Criteria to build the query from
      *
-     * @return UserQuery
+     * @return MyUserQuery
      */
     public static function create($modelAlias = null, $criteria = null)
     {
-        if ($criteria instanceof UserQuery) {
+        if ($criteria instanceof MyUserQuery) {
             return $criteria;
         }
-        $query = new UserQuery(null, null, $modelAlias);
+        $query = new MyUserQuery(null, null, $modelAlias);
 
         if ($criteria instanceof Criteria) {
             $query->mergeWith($criteria);
@@ -80,19 +80,19 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param     PropelPDO $con an optional connection object
      *
-     * @return   User|User[]|mixed the result, formatted by the current formatter
+     * @return   MyUser|MyUser[]|mixed the result, formatted by the current formatter
      */
     public function findPk($key, $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = UserPeer::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = MyUserPeer::getInstanceFromPool((string) $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getConnection(UserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(MyUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -110,7 +110,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return                 User A model object, or null if the key is not found
+     * @return                 MyUser A model object, or null if the key is not found
      * @throws PropelException
      */
      public function findOneByName($key, $con = null)
@@ -125,7 +125,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return                 User A model object, or null if the key is not found
+     * @return                 MyUser A model object, or null if the key is not found
      * @throws PropelException
      */
     protected function findPkSimple($key, $con)
@@ -141,9 +141,9 @@ abstract class BaseUserQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $obj = new User();
+            $obj = new MyUser();
             $obj->hydrate($row);
-            UserPeer::addInstanceToPool($obj, (string) $key);
+            MyUserPeer::addInstanceToPool($obj, (string) $key);
         }
         $stmt->closeCursor();
 
@@ -156,7 +156,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     PropelPDO $con A connection object
      *
-     * @return User|User[]|mixed the result, formatted by the current formatter
+     * @return MyUser|MyUser[]|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, $con)
     {
@@ -177,7 +177,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param     array $keys Primary keys to use for the query
      * @param     PropelPDO $con an optional connection object
      *
-     * @return PropelObjectCollection|User[]|mixed the list of results, formatted by the current formatter
+     * @return PropelObjectCollection|MyUser[]|mixed the list of results, formatted by the current formatter
      */
     public function findPks($keys, $con = null)
     {
@@ -198,12 +198,12 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return UserQuery The current query, for fluid interface
+     * @return MyUserQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(UserPeer::NAME, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(MyUserPeer::NAME, $key, Criteria::EQUAL);
     }
 
     /**
@@ -211,12 +211,12 @@ abstract class BaseUserQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return UserQuery The current query, for fluid interface
+     * @return MyUserQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(UserPeer::NAME, $keys, Criteria::IN);
+        return $this->addUsingAlias(MyUserPeer::NAME, $keys, Criteria::IN);
     }
 
     /**
@@ -232,7 +232,7 @@ abstract class BaseUserQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return UserQuery The current query, for fluid interface
+     * @return MyUserQuery The current query, for fluid interface
      */
     public function filterByName($name = null, $comparison = null)
     {
@@ -245,7 +245,7 @@ abstract class BaseUserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserPeer::NAME, $name, $comparison);
+        return $this->addUsingAlias(MyUserPeer::NAME, $name, $comparison);
     }
 
     /**
@@ -254,14 +254,14 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param   Invitation|PropelObjectCollection $invitation  the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return                 UserQuery The current query, for fluid interface
+     * @return                 MyUserQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
     public function filterByInvitation($invitation, $comparison = null)
     {
         if ($invitation instanceof Invitation) {
             return $this
-                ->addUsingAlias(UserPeer::NAME, $invitation->getUsername(), $comparison);
+                ->addUsingAlias(MyUserPeer::NAME, $invitation->getUsername(), $comparison);
         } elseif ($invitation instanceof PropelObjectCollection) {
             return $this
                 ->useInvitationQuery()
@@ -278,7 +278,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return UserQuery The current query, for fluid interface
+     * @return MyUserQuery The current query, for fluid interface
      */
     public function joinInvitation($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -329,7 +329,7 @@ abstract class BaseUserQuery extends ModelCriteria
      * @param   Event $event the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return   UserQuery The current query, for fluid interface
+     * @return   MyUserQuery The current query, for fluid interface
      */
     public function filterByEvent($event, $comparison = Criteria::EQUAL)
     {
@@ -342,14 +342,14 @@ abstract class BaseUserQuery extends ModelCriteria
     /**
      * Exclude object from result
      *
-     * @param   User $user Object to remove from the list of results
+     * @param   MyUser $myUser Object to remove from the list of results
      *
-     * @return UserQuery The current query, for fluid interface
+     * @return MyUserQuery The current query, for fluid interface
      */
-    public function prune($user = null)
+    public function prune($myUser = null)
     {
-        if ($user) {
-            $this->addUsingAlias(UserPeer::NAME, $user->getName(), Criteria::NOT_EQUAL);
+        if ($myUser) {
+            $this->addUsingAlias(MyUserPeer::NAME, $myUser->getName(), Criteria::NOT_EQUAL);
         }
 
         return $this;

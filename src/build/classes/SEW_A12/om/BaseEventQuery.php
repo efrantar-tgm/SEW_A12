@@ -478,19 +478,19 @@ abstract class BaseEventQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related User object
+     * Filter the query by a related MyUser object
      * using the invitations table as cross reference
      *
-     * @param   User $user the related object to use as filter
+     * @param   MyUser $myUser the related object to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return   EventQuery The current query, for fluid interface
      */
-    public function filterByUser($user, $comparison = Criteria::EQUAL)
+    public function filterByMyUser($myUser, $comparison = Criteria::EQUAL)
     {
         return $this
             ->useInvitationQuery()
-            ->filterByUser($user, $comparison)
+            ->filterByMyUser($myUser, $comparison)
             ->endUse();
     }
 

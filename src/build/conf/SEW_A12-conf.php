@@ -4,7 +4,7 @@
 $conf = array (
   'datasources' => 
   array (
-    'zum_wohle_aller' => 
+    'SEW_A12' => 
     array (
       'adapter' => 'mysql',
       'connection' => 
@@ -14,7 +14,7 @@ $conf = array (
         'password' => 'password',
       ),
     ),
-    'default' => 'zum_wohle_aller',
+    'default' => 'SEW_A12',
   ),
   'generator_version' => '1.7.0',
 );

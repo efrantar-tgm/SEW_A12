@@ -3,8 +3,8 @@
 
 <config>
   <propel>
-    <datasources default="zum_wohle_aller">
-      <datasource id="zum_wohle_aller">
+    <datasources default="SEW_A12">
+      <datasource id="SEW_A12">
         <adapter>mysql</adapter> <!-- sqlite, mysql, mssql, oracle, or pgsql -->
         <connection>
           <dsn>mysql:host=localhost;dbname=SEW_A12</dsn>

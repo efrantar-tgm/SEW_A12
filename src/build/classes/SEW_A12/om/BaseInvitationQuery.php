@@ -18,9 +18,9 @@
  * @method InvitationQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method InvitationQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method InvitationQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
- * @method InvitationQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
- * @method InvitationQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ * @method InvitationQuery leftJoinMyUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the MyUser relation
+ * @method InvitationQuery rightJoinMyUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the MyUser relation
+ * @method InvitationQuery innerJoinMyUser($relationAlias = null) Adds a INNER JOIN clause to the query using the MyUser relation
  *
  * @method InvitationQuery leftJoinEvent($relationAlias = null) Adds a LEFT JOIN clause to the query using the Event relation
  * @method InvitationQuery rightJoinEvent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Event relation
@@ -347,43 +347,43 @@ abstract class BaseInvitationQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related User object
+     * Filter the query by a related MyUser object
      *
-     * @param   User|PropelObjectCollection $user The related object(s) to use as filter
+     * @param   MyUser|PropelObjectCollection $myUser The related object(s) to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return                 InvitationQuery The current query, for fluid interface
      * @throws PropelException - if the provided filter is invalid.
      */
-    public function filterByUser($user, $comparison = null)
+    public function filterByMyUser($myUser, $comparison = null)
     {
-        if ($user instanceof User) {
+        if ($myUser instanceof MyUser) {
             return $this
-                ->addUsingAlias(InvitationPeer::USERNAME, $user->getName(), $comparison);
-        } elseif ($user instanceof PropelObjectCollection) {
+                ->addUsingAlias(InvitationPeer::USERNAME, $myUser->getName(), $comparison);
+        } elseif ($myUser instanceof PropelObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(InvitationPeer::USERNAME, $user->toKeyValue('PrimaryKey', 'Name'), $comparison);
+                ->addUsingAlias(InvitationPeer::USERNAME, $myUser->toKeyValue('PrimaryKey', 'Name'), $comparison);
         } else {
-            throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+            throw new PropelException('filterByMyUser() only accepts arguments of type MyUser or PropelCollection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the User relation
+     * Adds a JOIN clause to the query using the MyUser relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return InvitationQuery The current query, for fluid interface
      */
-    public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinMyUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('User');
+        $relationMap = $tableMap->getRelation('MyUser');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -398,14 +398,14 @@ abstract class BaseInvitationQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'User');
+            $this->addJoinObject($join, 'MyUser');
         }
 
         return $this;
     }
 
     /**
-     * Use the User relation User object
+     * Use the MyUser relation MyUser object
      *
      * @see       useQuery()
      *
@@ -413,13 +413,13 @@ abstract class BaseInvitationQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   UserQuery A secondary query class using the current class as primary query
+     * @return   MyUserQuery A secondary query class using the current class as primary query
      */
-    public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useMyUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinUser($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
+            ->joinMyUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'MyUser', 'MyUserQuery');
     }
 
     /**

@@ -1,0 +1,17 @@
+<?php
+require_once("../../../PropelInit.php");
+
+class MyUser extends BaseMyUser
+{
+	public function findAllInvitedEvents() {
+	}
+
+	private function findEventsByCondition($role) {
+		return InvitationQuery::create()
+			-> join('Event')
+			-> filterByRole($role)
+			-> filterByUsername($this->name)
+			-> select(array('Event.id'))
+			-> find();
+	}
+}

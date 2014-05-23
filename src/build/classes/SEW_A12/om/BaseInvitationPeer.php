@@ -463,7 +463,7 @@ abstract class BaseInvitationPeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related User table
+     * Returns the number of rows matching criteria, joining the related MyUser table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -471,7 +471,7 @@ abstract class BaseInvitationPeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinMyUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -498,7 +498,7 @@ abstract class BaseInvitationPeer
             $con = Propel::getConnection(InvitationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -565,7 +565,7 @@ abstract class BaseInvitationPeer
 
 
     /**
-     * Selects a collection of Invitation objects pre-filled with their User objects.
+     * Selects a collection of Invitation objects pre-filled with their MyUser objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -573,7 +573,7 @@ abstract class BaseInvitationPeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -584,9 +584,9 @@ abstract class BaseInvitationPeer
 
         InvitationPeer::addSelectColumns($criteria);
         $startcol = InvitationPeer::NUM_HYDRATE_COLUMNS;
-        UserPeer::addSelectColumns($criteria);
+        MyUserPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -606,19 +606,19 @@ abstract class BaseInvitationPeer
                 InvitationPeer::addInstanceToPool($obj1, $key1);
             } // if $obj1 already loaded
 
-            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol);
             if ($key2 !== null) {
-                $obj2 = UserPeer::getInstanceFromPool($key2);
+                $obj2 = MyUserPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $cls = UserPeer::getOMClass();
+                    $cls = MyUserPeer::getOMClass();
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol);
-                    UserPeer::addInstanceToPool($obj2, $key2);
+                    MyUserPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 already loaded
 
-                // Add the $obj1 (Invitation) to $obj2 (User)
+                // Add the $obj1 (Invitation) to $obj2 (MyUser)
                 $obj2->addInvitation($obj1);
 
             } // if joined row was not null
@@ -734,7 +734,7 @@ abstract class BaseInvitationPeer
             $con = Propel::getConnection(InvitationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $criteria->addJoin(InvitationPeer::EVENTID, EventPeer::ID, $join_behavior);
 
@@ -772,13 +772,13 @@ abstract class BaseInvitationPeer
         InvitationPeer::addSelectColumns($criteria);
         $startcol2 = InvitationPeer::NUM_HYDRATE_COLUMNS;
 
-        UserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + MyUserPeer::NUM_HYDRATE_COLUMNS;
 
         EventPeer::addSelectColumns($criteria);
         $startcol4 = $startcol3 + EventPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $criteria->addJoin(InvitationPeer::EVENTID, EventPeer::ID, $join_behavior);
 
@@ -799,21 +799,21 @@ abstract class BaseInvitationPeer
                 InvitationPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-            // Add objects for joined User rows
+            // Add objects for joined MyUser rows
 
-            $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
             if ($key2 !== null) {
-                $obj2 = UserPeer::getInstanceFromPool($key2);
+                $obj2 = MyUserPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $cls = UserPeer::getOMClass();
+                    $cls = MyUserPeer::getOMClass();
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
-                    UserPeer::addInstanceToPool($obj2, $key2);
+                    MyUserPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 loaded
 
-                // Add the $obj1 (Invitation) to the collection in $obj2 (User)
+                // Add the $obj1 (Invitation) to the collection in $obj2 (MyUser)
                 $obj2->addInvitation($obj1);
             } // if joined row not null
 
@@ -844,7 +844,7 @@ abstract class BaseInvitationPeer
 
 
     /**
-     * Returns the number of rows matching criteria, joining the related User table
+     * Returns the number of rows matching criteria, joining the related MyUser table
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -852,7 +852,7 @@ abstract class BaseInvitationPeer
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
      * @return int Number of matching rows.
      */
-    public static function doCountJoinAllExceptUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doCountJoinAllExceptMyUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -930,7 +930,7 @@ abstract class BaseInvitationPeer
             $con = Propel::getConnection(InvitationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -946,7 +946,7 @@ abstract class BaseInvitationPeer
 
 
     /**
-     * Selects a collection of Invitation objects pre-filled with all related objects except User.
+     * Selects a collection of Invitation objects pre-filled with all related objects except MyUser.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
@@ -955,7 +955,7 @@ abstract class BaseInvitationPeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -1043,10 +1043,10 @@ abstract class BaseInvitationPeer
         InvitationPeer::addSelectColumns($criteria);
         $startcol2 = InvitationPeer::NUM_HYDRATE_COLUMNS;
 
-        UserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + UserPeer::NUM_HYDRATE_COLUMNS;
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + MyUserPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(InvitationPeer::USERNAME, UserPeer::NAME, $join_behavior);
+        $criteria->addJoin(InvitationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
@@ -1066,21 +1066,21 @@ abstract class BaseInvitationPeer
                 InvitationPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-                // Add objects for joined User rows
+                // Add objects for joined MyUser rows
 
-                $key2 = UserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
                 if ($key2 !== null) {
-                    $obj2 = UserPeer::getInstanceFromPool($key2);
+                    $obj2 = MyUserPeer::getInstanceFromPool($key2);
                     if (!$obj2) {
 
-                        $cls = UserPeer::getOMClass();
+                        $cls = MyUserPeer::getOMClass();
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
-                    UserPeer::addInstanceToPool($obj2, $key2);
+                    MyUserPeer::addInstanceToPool($obj2, $key2);
                 } // if $obj2 already loaded
 
-                // Add the $obj1 (Invitation) to the collection in $obj2 (User)
+                // Add the $obj1 (Invitation) to the collection in $obj2 (MyUser)
                 $obj2->addInvitation($obj1);
 
             } // if joined row is not null

@@ -60,9 +60,9 @@ abstract class BaseEvent extends BaseObject implements Persistent
     protected $collInvitationsPartial;
 
     /**
-     * @var        PropelObjectCollection|User[] Collection to store aggregation of User objects.
+     * @var        PropelObjectCollection|MyUser[] Collection to store aggregation of MyUser objects.
      */
-    protected $collUsers;
+    protected $collMyUsers;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -88,7 +88,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $usersScheduledForDeletion = null;
+    protected $myUsersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -316,7 +316,7 @@ abstract class BaseEvent extends BaseObject implements Persistent
 
             $this->collInvitations = null;
 
-            $this->collUsers = null;
+            $this->collMyUsers = null;
         } // if (deep)
     }
 
@@ -441,28 +441,28 @@ abstract class BaseEvent extends BaseObject implements Persistent
                 $this->resetModified();
             }
 
-            if ($this->usersScheduledForDeletion !== null) {
-                if (!$this->usersScheduledForDeletion->isEmpty()) {
+            if ($this->myUsersScheduledForDeletion !== null) {
+                if (!$this->myUsersScheduledForDeletion->isEmpty()) {
                     $pks = array();
                     $pk = $this->getPrimaryKey();
-                    foreach ($this->usersScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
+                    foreach ($this->myUsersScheduledForDeletion->getPrimaryKeys(false) as $remotePk) {
                         $pks[] = array($remotePk, $pk);
                     }
                     InvitationQuery::create()
                         ->filterByPrimaryKeys($pks)
                         ->delete($con);
-                    $this->usersScheduledForDeletion = null;
+                    $this->myUsersScheduledForDeletion = null;
                 }
 
-                foreach ($this->getUsers() as $user) {
-                    if ($user->isModified()) {
-                        $user->save($con);
+                foreach ($this->getMyUsers() as $myUser) {
+                    if ($myUser->isModified()) {
+                        $myUser->save($con);
                     }
                 }
-            } elseif ($this->collUsers) {
-                foreach ($this->collUsers as $user) {
-                    if ($user->isModified()) {
-                        $user->save($con);
+            } elseif ($this->collMyUsers) {
+                foreach ($this->collMyUsers as $myUser) {
+                    if ($myUser->isModified()) {
+                        $myUser->save($con);
                     }
                 }
             }
@@ -1468,48 +1468,48 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|Invitation[] List of Invitation objects
      */
-    public function getInvitationsJoinUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getInvitationsJoinMyUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = InvitationQuery::create(null, $criteria);
-        $query->joinWith('User', $join_behavior);
+        $query->joinWith('MyUser', $join_behavior);
 
         return $this->getInvitations($query, $con);
     }
 
     /**
-     * Clears out the collUsers collection
+     * Clears out the collMyUsers collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return Event The current object (for fluent API support)
-     * @see        addUsers()
+     * @see        addMyUsers()
      */
-    public function clearUsers()
+    public function clearMyUsers()
     {
-        $this->collUsers = null; // important to set this to null since that means it is uninitialized
-        $this->collUsersPartial = null;
+        $this->collMyUsers = null; // important to set this to null since that means it is uninitialized
+        $this->collMyUsersPartial = null;
 
         return $this;
     }
 
     /**
-     * Initializes the collUsers collection.
+     * Initializes the collMyUsers collection.
      *
-     * By default this just sets the collUsers collection to an empty collection (like clearUsers());
+     * By default this just sets the collMyUsers collection to an empty collection (like clearMyUsers());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
      * @return void
      */
-    public function initUsers()
+    public function initMyUsers()
     {
-        $this->collUsers = new PropelObjectCollection();
-        $this->collUsers->setModel('User');
+        $this->collMyUsers = new PropelObjectCollection();
+        $this->collMyUsers->setModel('MyUser');
     }
 
     /**
-     * Gets a collection of User objects related by a many-to-many relationship
+     * Gets a collection of MyUser objects related by a many-to-many relationship
      * to the current object by way of the invitations cross-reference table.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
@@ -1521,73 +1521,73 @@ abstract class BaseEvent extends BaseObject implements Persistent
      * @param Criteria $criteria Optional query object to filter the query
      * @param PropelPDO $con Optional connection object
      *
-     * @return PropelObjectCollection|User[] List of User objects
+     * @return PropelObjectCollection|MyUser[] List of MyUser objects
      */
-    public function getUsers($criteria = null, PropelPDO $con = null)
+    public function getMyUsers($criteria = null, PropelPDO $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
-            if ($this->isNew() && null === $this->collUsers) {
+        if (null === $this->collMyUsers || null !== $criteria) {
+            if ($this->isNew() && null === $this->collMyUsers) {
                 // return empty collection
-                $this->initUsers();
+                $this->initMyUsers();
             } else {
-                $collUsers = UserQuery::create(null, $criteria)
+                $collMyUsers = MyUserQuery::create(null, $criteria)
                     ->filterByEvent($this)
                     ->find($con);
                 if (null !== $criteria) {
-                    return $collUsers;
+                    return $collMyUsers;
                 }
-                $this->collUsers = $collUsers;
+                $this->collMyUsers = $collMyUsers;
             }
         }
 
-        return $this->collUsers;
+        return $this->collMyUsers;
     }
 
     /**
-     * Sets a collection of User objects related by a many-to-many relationship
+     * Sets a collection of MyUser objects related by a many-to-many relationship
      * to the current object by way of the invitations cross-reference table.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param PropelCollection $users A Propel collection.
+     * @param PropelCollection $myUsers A Propel collection.
      * @param PropelPDO $con Optional connection object
      * @return Event The current object (for fluent API support)
      */
-    public function setUsers(PropelCollection $users, PropelPDO $con = null)
+    public function setMyUsers(PropelCollection $myUsers, PropelPDO $con = null)
     {
-        $this->clearUsers();
-        $currentUsers = $this->getUsers(null, $con);
+        $this->clearMyUsers();
+        $currentMyUsers = $this->getMyUsers(null, $con);
 
-        $this->usersScheduledForDeletion = $currentUsers->diff($users);
+        $this->myUsersScheduledForDeletion = $currentMyUsers->diff($myUsers);
 
-        foreach ($users as $user) {
-            if (!$currentUsers->contains($user)) {
-                $this->doAddUser($user);
+        foreach ($myUsers as $myUser) {
+            if (!$currentMyUsers->contains($myUser)) {
+                $this->doAddMyUser($myUser);
             }
         }
 
-        $this->collUsers = $users;
+        $this->collMyUsers = $myUsers;
 
         return $this;
     }
 
     /**
-     * Gets the number of User objects related by a many-to-many relationship
+     * Gets the number of MyUser objects related by a many-to-many relationship
      * to the current object by way of the invitations cross-reference table.
      *
      * @param Criteria $criteria Optional query object to filter the query
      * @param boolean $distinct Set to true to force count distinct
      * @param PropelPDO $con Optional connection object
      *
-     * @return int the number of related User objects
+     * @return int the number of related MyUser objects
      */
-    public function countUsers($criteria = null, $distinct = false, PropelPDO $con = null)
+    public function countMyUsers($criteria = null, $distinct = false, PropelPDO $con = null)
     {
-        if (null === $this->collUsers || null !== $criteria) {
-            if ($this->isNew() && null === $this->collUsers) {
+        if (null === $this->collMyUsers || null !== $criteria) {
+            if ($this->isNew() && null === $this->collMyUsers) {
                 return 0;
             } else {
-                $query = UserQuery::create(null, $criteria);
+                $query = MyUserQuery::create(null, $criteria);
                 if ($distinct) {
                     $query->distinct();
                 }
@@ -1597,29 +1597,29 @@ abstract class BaseEvent extends BaseObject implements Persistent
                     ->count($con);
             }
         } else {
-            return count($this->collUsers);
+            return count($this->collMyUsers);
         }
     }
 
     /**
-     * Associate a User object to this object
+     * Associate a MyUser object to this object
      * through the invitations cross reference table.
      *
-     * @param  User $user The Invitation object to relate
+     * @param  MyUser $myUser The Invitation object to relate
      * @return Event The current object (for fluent API support)
      */
-    public function addUser(User $user)
+    public function addMyUser(MyUser $myUser)
     {
-        if ($this->collUsers === null) {
-            $this->initUsers();
+        if ($this->collMyUsers === null) {
+            $this->initMyUsers();
         }
 
-        if (!$this->collUsers->contains($user)) { // only add it if the **same** object is not already associated
-            $this->doAddUser($user);
-            $this->collUsers[] = $user;
+        if (!$this->collMyUsers->contains($myUser)) { // only add it if the **same** object is not already associated
+            $this->doAddMyUser($myUser);
+            $this->collMyUsers[] = $myUser;
 
-            if ($this->usersScheduledForDeletion and $this->usersScheduledForDeletion->contains($user)) {
-                $this->usersScheduledForDeletion->remove($this->usersScheduledForDeletion->search($user));
+            if ($this->myUsersScheduledForDeletion and $this->myUsersScheduledForDeletion->contains($myUser)) {
+                $this->myUsersScheduledForDeletion->remove($this->myUsersScheduledForDeletion->search($myUser));
             }
         }
 
@@ -1627,38 +1627,38 @@ abstract class BaseEvent extends BaseObject implements Persistent
     }
 
     /**
-     * @param	User $user The user object to add.
+     * @param	MyUser $myUser The myUser object to add.
      */
-    protected function doAddUser(User $user)
+    protected function doAddMyUser(MyUser $myUser)
     {
         // set the back reference to this object directly as using provided method either results
         // in endless loop or in multiple relations
-        if (!$user->getEvents()->contains($this)) {
+        if (!$myUser->getEvents()->contains($this)) {
             $invitation = new Invitation();
-            $invitation->setUser($user);
+            $invitation->setMyUser($myUser);
             $this->addInvitation($invitation);
 
-            $foreignCollection = $user->getEvents();
+            $foreignCollection = $myUser->getEvents();
             $foreignCollection[] = $this;
         }
     }
 
     /**
-     * Remove a User object to this object
+     * Remove a MyUser object to this object
      * through the invitations cross reference table.
      *
-     * @param User $user The Invitation object to relate
+     * @param MyUser $myUser The Invitation object to relate
      * @return Event The current object (for fluent API support)
      */
-    public function removeUser(User $user)
+    public function removeMyUser(MyUser $myUser)
     {
-        if ($this->getUsers()->contains($user)) {
-            $this->collUsers->remove($this->collUsers->search($user));
-            if (null === $this->usersScheduledForDeletion) {
-                $this->usersScheduledForDeletion = clone $this->collUsers;
-                $this->usersScheduledForDeletion->clear();
+        if ($this->getMyUsers()->contains($myUser)) {
+            $this->collMyUsers->remove($this->collMyUsers->search($myUser));
+            if (null === $this->myUsersScheduledForDeletion) {
+                $this->myUsersScheduledForDeletion = clone $this->collMyUsers;
+                $this->myUsersScheduledForDeletion->clear();
             }
-            $this->usersScheduledForDeletion[]= $user;
+            $this->myUsersScheduledForDeletion[]= $myUser;
         }
 
         return $this;
@@ -1704,8 +1704,8 @@ abstract class BaseEvent extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collUsers) {
-                foreach ($this->collUsers as $o) {
+            if ($this->collMyUsers) {
+                foreach ($this->collMyUsers as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -1721,10 +1721,10 @@ abstract class BaseEvent extends BaseObject implements Persistent
             $this->collInvitations->clearIterator();
         }
         $this->collInvitations = null;
-        if ($this->collUsers instanceof PropelCollection) {
-            $this->collUsers->clearIterator();
+        if ($this->collMyUsers instanceof PropelCollection) {
+            $this->collMyUsers->clearIterator();
         }
-        $this->collUsers = null;
+        $this->collMyUsers = null;
     }
 
     /**

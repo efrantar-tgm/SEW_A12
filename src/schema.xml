@@ -2,7 +2,7 @@
 <!-- This is the Propel database-schema for the SEW_A12-project -->
 
 <database name="SEW_A12" defaultIdMethod="native">
-	<table name="users" phpName="User">
+	<table name="users" phpName="MyUser">
 		<column name="name" type="varchar" required="true" primaryKey="true" />
 	</table>
 

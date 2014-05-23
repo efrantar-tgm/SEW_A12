@@ -13,6 +13,6 @@
  *
  * @package    propel.generator.SEW_A12
  */
-class UserQuery extends BaseUserQuery
+class MyUserPeer extends BaseMyUserPeer
 {
 }

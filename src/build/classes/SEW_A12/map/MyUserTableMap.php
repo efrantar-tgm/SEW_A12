@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'events' table.
+ * This class defines the structure of the 'users' table.
  *
  *
  *
@@ -14,13 +14,13 @@
  *
  * @package    propel.generator.SEW_A12.map
  */
-class EventTableMap extends TableMap
+class MyUserTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'SEW_A12.map.EventTableMap';
+    const CLASS_NAME = 'SEW_A12.map.MyUserTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -32,15 +32,13 @@ class EventTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('events');
-        $this->setPhpName('Event');
-        $this->setClassname('Event');
+        $this->setName('users');
+        $this->setPhpName('MyUser');
+        $this->setClassname('MyUser');
         $this->setPackage('SEW_A12');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, null);
+        $this->addPrimaryKey('name', 'Name', 'VARCHAR', true, 255, null);
         // validators
     } // initialize()
 
@@ -49,9 +47,8 @@ class EventTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('DateOption', 'DateOption', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), null, null, 'DateOptions');
-        $this->addRelation('Invitation', 'Invitation', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), 'CASCADE', null, 'Invitations');
-        $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'MyUsers');
+        $this->addRelation('Invitation', 'Invitation', RelationMap::ONE_TO_MANY, array('name' => 'userName', ), 'CASCADE', null, 'Invitations');
+        $this->addRelation('Event', 'Event', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Events');
     } // buildRelations()
 
-} // EventTableMap
+} // MyUserTableMap

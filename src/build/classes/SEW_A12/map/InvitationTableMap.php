@@ -50,7 +50,7 @@ class InvitationTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('userName' => 'name', ), 'CASCADE', null);
+        $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_ONE, array('userName' => 'name', ), 'CASCADE', null);
         $this->addRelation('Event', 'Event', RelationMap::MANY_TO_ONE, array('eventId' => 'id', ), 'CASCADE', null);
     } // buildRelations()
 

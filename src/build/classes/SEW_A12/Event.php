@@ -15,4 +15,6 @@
  */
 class Event extends BaseEvent
 {
+	const ORGANIZER = 0;
+	const PARTICIPANT = 1;
 }
