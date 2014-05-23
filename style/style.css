@@ -1,0 +1,34 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.header {
+	font-size:20px;
+	font-weight:bold;
+	color: #555;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.schrift, .event {
+	font-size: 14px;
+	color: #555;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.event {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+.zelle {
+	border: 1px solid #FFF;
+	cursor: pointer;
+}
+.zelle:hover {
+	background-image:linear-gradient(to top, #f1f1f1,#b3b3b3);
+}
+
+.zelle:active {
+	border: 1px solid #000;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
