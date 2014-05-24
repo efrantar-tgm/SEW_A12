@@ -1,20 +1,18 @@
 <?php
-
-
-
-/**
- * Skeleton subclass for representing a row from the 'events' table.
- *
- *
- *
- * You should add additional methods to this class to meet the
- * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- *
- * @package    propel.generator.SEW_A12
- */
 class Event extends BaseEvent
 {
+	const NONE = -1;
 	const ORGANIZER = 0;
 	const PARTICIPANT = 1;
+
+	public function getRole($user) {
+		$invitation = $this->getInvitation($user);
+
+		if(is_null($invitation)){ return EVENT::NONE; }
+		return $invitation->getRole();
+	}
+
+	public function getInvitation($user) {
+		return InvitationQuery::create() -> findPk(array($user->getName(), $this->getId()));
+	}
 }

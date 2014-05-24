@@ -40,7 +40,7 @@ class DateOptionTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('date', 'Date', 'DATE', true, null, null);
-        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, null);
+        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, false);
         $this->addForeignKey('eventId', 'Eventid', 'INTEGER', 'events', 'id', true, null, null);
         // validators
     } // initialize()
@@ -50,7 +50,7 @@ class DateOptionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Event', 'Event', RelationMap::MANY_TO_ONE, array('eventId' => 'id', ), null, null);
+        $this->addRelation('Event', 'Event', RelationMap::MANY_TO_ONE, array('eventId' => 'id', ), 'CASCADE', null);
     } // buildRelations()
 
 } // DateOptionTableMap

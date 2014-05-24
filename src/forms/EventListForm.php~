@@ -35,9 +35,9 @@ class EventListForm {
 		for($e = 0; $e < count($this->my_events) ; $e++){
 			echo '<table width="50%">
 				  	<td class="zelle">
-						<a class="event" style="color: #584A84;" href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'
-							.$this->my_events[$e]->getName().'
-						</a>
+						<div class="event" style="color: #584A84;">
+							<a href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'.$this->my_events[$e]->getName().'</a>
+						</div>
 						</td>
 						</table>
 			
@@ -55,9 +55,9 @@ class EventListForm {
 		for($i = 0; $i < count($this->invited) ; $i++){
 			echo '<table width="50%" border="1px" bordercolor="#FFFFFF">
 				  	<td class="zelle">
-						<a class="event" style="color: #54A34A;" href="../userCake/Event.php?id='.$this->invited[$i]->getId().'">'
-							.$this->invited[$i]->getName().'
-						</a>
+						<div class="event" style="color: #54A34A;">
+							<a class="event" style="color: #54A34A;" href="../userCake/Event.php?id='.$this->invited[$i]->getId().'">'.$this->invited[$i]->getName().'</a></div>
+						</div>
 						</td>
 						</table>
 			

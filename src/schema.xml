@@ -9,16 +9,16 @@
 	<table name="events" phpName="Event">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="varchar" required="true" />
-		<column name="fixed" type="boolean" />
+		<column name="fixed" type="boolean" defaultValue="false" />
 	</table>
 
 	<table name="dateOptions" phpName="DateOption">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 	 	<column name="date" type="date" required="true" />
-		<column name="fixed" type="boolean" />
+		<column name="fixed" type="boolean" defaultValue="false" />
 
 		<column name="eventId" type="integer" required="true" />
-		<foreign-key foreignTable="events">
+		<foreign-key foreignTable="events" onDelete="cascade">
     	<reference local="eventId" foreign="id" />
   	</foreign-key>
 	</table>

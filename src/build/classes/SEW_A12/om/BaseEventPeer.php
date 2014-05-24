@@ -365,6 +365,9 @@ abstract class BaseEventPeer
      */
     public static function clearRelatedInstancePool()
     {
+        // Invalidate objects in DateOptionPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        DateOptionPeer::clearInstancePool();
         // Invalidate objects in InvitationPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         InvitationPeer::clearInstancePool();
@@ -701,6 +704,12 @@ abstract class BaseEventPeer
         $objects = EventPeer::doSelect($criteria, $con);
         foreach ($objects as $obj) {
 
+
+            // delete related DateOption objects
+            $criteria = new Criteria(DateOptionPeer::DATABASE_NAME);
+
+            $criteria->add(DateOptionPeer::EVENTID, $obj->getId());
+            $affectedRows += DateOptionPeer::doDelete($criteria, $con);
 
             // delete related Invitation objects
             $criteria = new Criteria(InvitationPeer::DATABASE_NAME);

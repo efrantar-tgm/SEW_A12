@@ -25,7 +25,7 @@ CREATE TABLE `events`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `fixed` TINYINT(1),
+    `fixed` TINYINT(1) DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 
@@ -39,7 +39,7 @@ CREATE TABLE `dateOptions`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `date` DATE NOT NULL,
-    `fixed` TINYINT(1),
+    `fixed` TINYINT(1) DEFAULT 0,
     `eventId` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `dateOptions_FI_1` (`eventId`)

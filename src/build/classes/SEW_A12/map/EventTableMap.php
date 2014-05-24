@@ -40,7 +40,7 @@ class EventTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, null);
+        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, false);
         // validators
     } // initialize()
 
@@ -49,7 +49,7 @@ class EventTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('DateOption', 'DateOption', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), null, null, 'DateOptions');
+        $this->addRelation('DateOption', 'DateOption', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), 'CASCADE', null, 'DateOptions');
         $this->addRelation('Invitation', 'Invitation', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), 'CASCADE', null, 'Invitations');
         $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'MyUsers');
     } // buildRelations()
