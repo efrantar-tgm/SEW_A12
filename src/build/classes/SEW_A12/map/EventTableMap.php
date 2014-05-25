@@ -37,10 +37,12 @@ class EventTableMap extends TableMap
         $this->setClassname('Event');
         $this->setPackage('SEW_A12');
         $this->setUseIdGenerator(true);
+        $this->setSingleTableInheritance(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, false);
+        $this->addColumn('class_key', 'ClassKey', 'VARCHAR', false, 255, null);
         // validators
     } // initialize()
 

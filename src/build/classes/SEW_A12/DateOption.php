@@ -1,18 +1,23 @@
 <?php
-
-
-
 /**
- * Skeleton subclass for representing a row from the 'dateOptions' table.
- *
- *
- *
- * You should add additional methods to this class to meet the
- * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- *
- * @package    propel.generator.SEW_A12
+ * This is the base-class for all date-options used in this application.
+ * @author Elias Frantar
+ * @version 25.5.2014
  */
-class DateOption extends BaseDateOption
+abstract class DateOption extends BaseDateOption
 {
+	/**
+   * Polls this option for a given user.
+   * @param MyUser the user to poll for
+   * @param boolean true if accept; false otherwise
+   * @return boolean true if poll was successful/allowed; false otherwise
+   */
+	public abstract function poll($user, $accept);
+
+	/**
+   * Determines if the poll for this option has already been finished.
+   * @return boolean true if poll is finished; false otherwise
+   */
+	public abstract function pollFinished();
 }
+?>

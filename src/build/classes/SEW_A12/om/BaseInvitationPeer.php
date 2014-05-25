@@ -678,7 +678,8 @@ abstract class BaseInvitationPeer
                 $obj2 = EventPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $cls = EventPeer::getOMClass();
+                    $omClass = EventPeer::getOMClass($row, $startcol);
+                    $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol);
@@ -824,7 +825,8 @@ abstract class BaseInvitationPeer
                 $obj3 = EventPeer::getInstanceFromPool($key3);
                 if (!$obj3) {
 
-                    $cls = EventPeer::getOMClass();
+                    $omClass = EventPeer::getOMClass($row, $startcol3);
+          $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj3 = new $cls();
                     $obj3->hydrate($row, $startcol3);
@@ -999,7 +1001,8 @@ abstract class BaseInvitationPeer
                     $obj2 = EventPeer::getInstanceFromPool($key2);
                     if (!$obj2) {
 
-                        $cls = EventPeer::getOMClass();
+                        $omClass = EventPeer::getOMClass($row, $startcol2);
+            $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);

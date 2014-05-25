@@ -28,26 +28,28 @@ switch($roletype) {
 }
 
 if($roletype == EVENT::ORGANIZER) {
-	/* test inviting and disinviting */
-	$manage_invitations = $role->getPermission(Permission::MANAGE_INVITATIONS);
+	if(false) { // the following code was just for testing purposes
+		/* test inviting and disinviting */
+		$manage_invitations = $role->getPermission(Permission::MANAGE_INVITATIONS);
 
-	$newUser = MyUserQuery::create()->findPk("User1");
+		$newUser = MyUserQuery::create()->findPk("User1");
 	
-	$manage_invitations->disinvite($newUser);
-	$manage_invitations->invite($newUser);
+		$manage_invitations->disinvite($newUser);
+		$manage_invitations->invite($newUser);
 
-	/* test add editing and deleting date options */
-	$manage_dates = $role->getPermission(Permission::MANAGE_DATES);
+		/* test add editing and deleting date options */
+		$manage_dates = $role->getPermission(Permission::MANAGE_DATES);
 	
-	$option = new DateOption(new DateTime("2000-01-01"));
+		$option = new DateOption(new DateTime("2000-01-01"));
 
-	$manage_dates->addOption($option);
-	$manage_dates->editOption($option, new DateTime("2000-01-02"));
-	$manage_dates->removeOption($option);
+		$manage_dates->addOption($option);
+		$manage_dates->editOption($option, new DateTime("2000-01-02"));
+		$manage_dates->removeOption($option);
 
-	/* test deleting the event */
-	$manage_event = $role->getPermission(Permission::MANAGE_EVENT);
+		/* test deleting the event */
+		$manage_event = $role->getPermission(Permission::MANAGE_EVENT);
 
-	$manage_event->deleteEvent();
+		$manage_event->deleteEvent();
+	}
 }
 ?>

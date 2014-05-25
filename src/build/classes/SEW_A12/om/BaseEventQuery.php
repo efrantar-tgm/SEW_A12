@@ -9,10 +9,12 @@
  * @method EventQuery orderById($order = Criteria::ASC) Order by the id column
  * @method EventQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method EventQuery orderByFixed($order = Criteria::ASC) Order by the fixed column
+ * @method EventQuery orderByClassKey($order = Criteria::ASC) Order by the class_key column
  *
  * @method EventQuery groupById() Group by the id column
  * @method EventQuery groupByName() Group by the name column
  * @method EventQuery groupByFixed() Group by the fixed column
+ * @method EventQuery groupByClassKey() Group by the class_key column
  *
  * @method EventQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method EventQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -31,10 +33,12 @@
  *
  * @method Event findOneByName(string $name) Return the first Event filtered by the name column
  * @method Event findOneByFixed(boolean $fixed) Return the first Event filtered by the fixed column
+ * @method Event findOneByClassKey(string $class_key) Return the first Event filtered by the class_key column
  *
  * @method array findById(int $id) Return Event objects filtered by the id column
  * @method array findByName(string $name) Return Event objects filtered by the name column
  * @method array findByFixed(boolean $fixed) Return Event objects filtered by the fixed column
+ * @method array findByClassKey(string $class_key) Return Event objects filtered by the class_key column
  *
  * @package    propel.generator.SEW_A12.om
  */
@@ -142,7 +146,7 @@ abstract class BaseEventQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `name`, `fixed` FROM `events` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `name`, `fixed`, `class_key` FROM `events` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -153,7 +157,8 @@ abstract class BaseEventQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $obj = new Event();
+            $cls = EventPeer::getOMClass($row, 0);
+            $obj = new $cls();
             $obj->hydrate($row);
             EventPeer::addInstanceToPool($obj, (string) $key);
         }
@@ -327,6 +332,35 @@ abstract class BaseEventQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(EventPeer::FIXED, $fixed, $comparison);
+    }
+
+    /**
+     * Filter the query on the class_key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByClassKey('fooValue');   // WHERE class_key = 'fooValue'
+     * $query->filterByClassKey('%fooValue%'); // WHERE class_key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $classKey The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return EventQuery The current query, for fluid interface
+     */
+    public function filterByClassKey($classKey = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($classKey)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $classKey)) {
+                $classKey = str_replace('*', '%', $classKey);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(EventPeer::CLASS_KEY, $classKey, $comparison);
     }
 
     /**

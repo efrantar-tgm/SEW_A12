@@ -10,11 +10,13 @@
  * @method DateOptionQuery orderByDate($order = Criteria::ASC) Order by the date column
  * @method DateOptionQuery orderByFixed($order = Criteria::ASC) Order by the fixed column
  * @method DateOptionQuery orderByEventid($order = Criteria::ASC) Order by the eventId column
+ * @method DateOptionQuery orderByClassKey($order = Criteria::ASC) Order by the class_key column
  *
  * @method DateOptionQuery groupById() Group by the id column
  * @method DateOptionQuery groupByDate() Group by the date column
  * @method DateOptionQuery groupByFixed() Group by the fixed column
  * @method DateOptionQuery groupByEventid() Group by the eventId column
+ * @method DateOptionQuery groupByClassKey() Group by the class_key column
  *
  * @method DateOptionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method DateOptionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -30,11 +32,13 @@
  * @method DateOption findOneByDate(string $date) Return the first DateOption filtered by the date column
  * @method DateOption findOneByFixed(boolean $fixed) Return the first DateOption filtered by the fixed column
  * @method DateOption findOneByEventid(int $eventId) Return the first DateOption filtered by the eventId column
+ * @method DateOption findOneByClassKey(string $class_key) Return the first DateOption filtered by the class_key column
  *
  * @method array findById(int $id) Return DateOption objects filtered by the id column
  * @method array findByDate(string $date) Return DateOption objects filtered by the date column
  * @method array findByFixed(boolean $fixed) Return DateOption objects filtered by the fixed column
  * @method array findByEventid(int $eventId) Return DateOption objects filtered by the eventId column
+ * @method array findByClassKey(string $class_key) Return DateOption objects filtered by the class_key column
  *
  * @package    propel.generator.SEW_A12.om
  */
@@ -142,7 +146,7 @@ abstract class BaseDateOptionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `date`, `fixed`, `eventId` FROM `dateOptions` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `date`, `fixed`, `eventId`, `class_key` FROM `dateOptions` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -153,7 +157,8 @@ abstract class BaseDateOptionQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $obj = new DateOption();
+            $cls = DateOptionPeer::getOMClass($row, 0);
+            $obj = new $cls();
             $obj->hydrate($row);
             DateOptionPeer::addInstanceToPool($obj, (string) $key);
         }
@@ -385,6 +390,35 @@ abstract class BaseDateOptionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DateOptionPeer::EVENTID, $eventid, $comparison);
+    }
+
+    /**
+     * Filter the query on the class_key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByClassKey('fooValue');   // WHERE class_key = 'fooValue'
+     * $query->filterByClassKey('%fooValue%'); // WHERE class_key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $classKey The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DateOptionQuery The current query, for fluid interface
+     */
+    public function filterByClassKey($classKey = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($classKey)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $classKey)) {
+                $classKey = str_replace('*', '%', $classKey);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DateOptionPeer::CLASS_KEY, $classKey, $comparison);
     }
 
     /**

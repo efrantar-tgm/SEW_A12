@@ -43,8 +43,11 @@
 		<behavior name="concrete_inheritance">
     	<parameter name="extends" value="dateOptions" />
   	</behavior>
-  
-		<column name="choices" type="object" />
+  	
+		<column name="userName" type="varchar" />
+		<foreign-key foreignTable="users" onDelete="cascade">
+			<reference local="userName" foreign="name" />
+		</foreign-key>
 	</table>
 
 	<table name="invitations" phpName="Invitation" isCrossRef="true">

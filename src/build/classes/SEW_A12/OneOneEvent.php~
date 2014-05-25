@@ -1,0 +1,19 @@
+<?php
+class OneOneEvent extends Event {
+
+    /**
+     * Constructs a new OneOneEvent class, setting the class_key column to EventPeer::CLASSKEY_ONEONE.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setClassKey(EventPeer::CLASSKEY_ONEONE);
+    }
+
+		/**
+     * @see Event
+     */
+		public function pollFinished() {
+		}
+}
+?>

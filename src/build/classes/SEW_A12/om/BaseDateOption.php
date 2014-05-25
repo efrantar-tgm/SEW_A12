@@ -55,6 +55,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     protected $eventid;
 
     /**
+     * The value for the class_key field.
+     * @var        string
+     */
+    protected $class_key;
+
+    /**
      * @var        Event
      */
     protected $aEvent;
@@ -174,6 +180,17 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [class_key] column value.
+     *
+     * @return string
+     */
+    public function getClassKey()
+    {
+
+        return $this->class_key;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param  int $v new value
@@ -272,6 +289,27 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     } // setEventid()
 
     /**
+     * Set the value of [class_key] column.
+     *
+     * @param  string $v new value
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function setClassKey($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->class_key !== $v) {
+            $this->class_key = $v;
+            $this->modifiedColumns[] = DateOptionPeer::CLASS_KEY;
+        }
+
+
+        return $this;
+    } // setClassKey()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -311,6 +349,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             $this->date = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
             $this->fixed = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
             $this->eventid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+            $this->class_key = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -320,7 +359,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 4; // 4 = DateOptionPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = DateOptionPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating DateOption object", $e);
@@ -560,6 +599,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($this->isColumnModified(DateOptionPeer::EVENTID)) {
             $modifiedColumns[':p' . $index++]  = '`eventId`';
         }
+        if ($this->isColumnModified(DateOptionPeer::CLASS_KEY)) {
+            $modifiedColumns[':p' . $index++]  = '`class_key`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `dateOptions` (%s) VALUES (%s)',
@@ -582,6 +624,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
                         break;
                     case '`eventId`':
                         $stmt->bindValue($identifier, $this->eventid, PDO::PARAM_INT);
+                        break;
+                    case '`class_key`':
+                        $stmt->bindValue($identifier, $this->class_key, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -741,6 +786,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             case 3:
                 return $this->getEventid();
                 break;
+            case 4:
+                return $this->getClassKey();
+                break;
             default:
                 return null;
                 break;
@@ -774,6 +822,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             $keys[1] => $this->getDate(),
             $keys[2] => $this->getFixed(),
             $keys[3] => $this->getEventid(),
+            $keys[4] => $this->getClassKey(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -830,6 +879,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             case 3:
                 $this->setEventid($value);
                 break;
+            case 4:
+                $this->setClassKey($value);
+                break;
         } // switch()
     }
 
@@ -858,6 +910,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if (array_key_exists($keys[1], $arr)) $this->setDate($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setFixed($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setEventid($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setClassKey($arr[$keys[4]]);
     }
 
     /**
@@ -873,6 +926,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($this->isColumnModified(DateOptionPeer::DATE)) $criteria->add(DateOptionPeer::DATE, $this->date);
         if ($this->isColumnModified(DateOptionPeer::FIXED)) $criteria->add(DateOptionPeer::FIXED, $this->fixed);
         if ($this->isColumnModified(DateOptionPeer::EVENTID)) $criteria->add(DateOptionPeer::EVENTID, $this->eventid);
+        if ($this->isColumnModified(DateOptionPeer::CLASS_KEY)) $criteria->add(DateOptionPeer::CLASS_KEY, $this->class_key);
 
         return $criteria;
     }
@@ -939,6 +993,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         $copyObj->setDate($this->getDate());
         $copyObj->setFixed($this->getFixed());
         $copyObj->setEventid($this->getEventid());
+        $copyObj->setClassKey($this->getClassKey());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1058,6 +1113,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         $this->date = null;
         $this->fixed = null;
         $this->eventid = null;
+        $this->class_key = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;

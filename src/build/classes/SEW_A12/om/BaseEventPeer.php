@@ -24,13 +24,13 @@ abstract class BaseEventPeer
     const TM_CLASS = 'EventTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /** the column name for the id field */
     const ID = 'events.id';
@@ -40,6 +40,27 @@ abstract class BaseEventPeer
 
     /** the column name for the fixed field */
     const FIXED = 'events.fixed';
+
+    /** the column name for the class_key field */
+    const CLASS_KEY = 'events.class_key';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STANDARD = 'STANDARD';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STANDARDEVENT = 'STANDARD';
+
+    /** A class that can be returned by this peer. */
+    const CLASSNAME_STANDARD = 'StandardEvent';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_ONEONE = 'ONEONE';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_ONEONEEVENT = 'ONEONE';
+
+    /** A class that can be returned by this peer. */
+    const CLASSNAME_ONEONE = 'OneOneEvent';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -60,12 +81,12 @@ abstract class BaseEventPeer
      * e.g. EventPeer::$fieldNames[EventPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Fixed', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'fixed', ),
-        BasePeer::TYPE_COLNAME => array (EventPeer::ID, EventPeer::NAME, EventPeer::FIXED, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'FIXED', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'fixed', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Name', 'Fixed', 'ClassKey', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', 'fixed', 'classKey', ),
+        BasePeer::TYPE_COLNAME => array (EventPeer::ID, EventPeer::NAME, EventPeer::FIXED, EventPeer::CLASS_KEY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'NAME', 'FIXED', 'CLASS_KEY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'name', 'fixed', 'class_key', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -75,12 +96,12 @@ abstract class BaseEventPeer
      * e.g. EventPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Fixed' => 2, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'fixed' => 2, ),
-        BasePeer::TYPE_COLNAME => array (EventPeer::ID => 0, EventPeer::NAME => 1, EventPeer::FIXED => 2, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'FIXED' => 2, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'fixed' => 2, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, 'Fixed' => 2, 'ClassKey' => 3, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, 'fixed' => 2, 'classKey' => 3, ),
+        BasePeer::TYPE_COLNAME => array (EventPeer::ID => 0, EventPeer::NAME => 1, EventPeer::FIXED => 2, EventPeer::CLASS_KEY => 3, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'NAME' => 1, 'FIXED' => 2, 'CLASS_KEY' => 3, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'name' => 1, 'fixed' => 2, 'class_key' => 3, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
 
     /**
@@ -157,10 +178,12 @@ abstract class BaseEventPeer
             $criteria->addSelectColumn(EventPeer::ID);
             $criteria->addSelectColumn(EventPeer::NAME);
             $criteria->addSelectColumn(EventPeer::FIXED);
+            $criteria->addSelectColumn(EventPeer::CLASS_KEY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.fixed');
+            $criteria->addSelectColumn($alias . '.class_key');
         }
     }
 
@@ -419,8 +442,6 @@ abstract class BaseEventPeer
     {
         $results = array();
 
-        // set the class once to avoid overhead in the loop
-        $cls = EventPeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $key = EventPeer::getPrimaryKeyHashFromRow($row, 0);
@@ -430,6 +451,9 @@ abstract class BaseEventPeer
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
+                // class must be set each time from the record row
+                $cls = EventPeer::getOMClass($row, 0);
+                $cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -458,7 +482,7 @@ abstract class BaseEventPeer
             // $obj->hydrate($row, $startcol, true); // rehydrate
             $col = $startcol + EventPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = EventPeer::OM_CLASS;
+            $cls = EventPeer::getOMClass($row, $startcol);
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
             EventPeer::addInstanceToPool($obj, $key);
@@ -491,14 +515,41 @@ abstract class BaseEventPeer
     }
 
     /**
-     * The class that the Peer will make instances of.
+     * The returned Class will contain objects of the default type or
+     * objects that inherit from the default.
      *
-     *
-     * @return string ClassName
+     * @param      array $row PropelPDO result row.
+     * @param      int $colnum Column to examine for OM class information (first is 0).
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return EventPeer::OM_CLASS;
+        try {
+
+            $omClass = null;
+            $classKey = $row[$colnum + 3];
+
+            switch ($classKey) {
+
+                case EventPeer::CLASSKEY_STANDARD:
+                    $omClass = EventPeer::CLASSNAME_STANDARD;
+                    break;
+
+                case EventPeer::CLASSKEY_ONEONE:
+                    $omClass = EventPeer::CLASSNAME_ONEONE;
+                    break;
+
+                default:
+                    $omClass = EventPeer::OM_CLASS;
+
+            } // switch
+
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get OM class.', $e);
+        }
+
+        return $omClass;
     }
 
     /**

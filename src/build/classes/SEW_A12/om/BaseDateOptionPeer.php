@@ -24,13 +24,13 @@ abstract class BaseDateOptionPeer
     const TM_CLASS = 'DateOptionTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /** the column name for the id field */
     const ID = 'dateOptions.id';
@@ -43,6 +43,27 @@ abstract class BaseDateOptionPeer
 
     /** the column name for the eventId field */
     const EVENTID = 'dateOptions.eventId';
+
+    /** the column name for the class_key field */
+    const CLASS_KEY = 'dateOptions.class_key';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STANDARD = 'STANDARD';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STANDARDOPTION = 'STANDARD';
+
+    /** A class that can be returned by this peer. */
+    const CLASSNAME_STANDARD = 'StandardOption';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_ONEONE = 'ONEONE';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_ONEONEOPTION = 'ONEONE';
+
+    /** A class that can be returned by this peer. */
+    const CLASSNAME_ONEONE = 'OneOneOption';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -63,12 +84,12 @@ abstract class BaseDateOptionPeer
      * e.g. DateOptionPeer::$fieldNames[DateOptionPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Date', 'Fixed', 'Eventid', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'date', 'fixed', 'eventid', ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID, DateOptionPeer::DATE, DateOptionPeer::FIXED, DateOptionPeer::EVENTID, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DATE', 'FIXED', 'EVENTID', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'date', 'fixed', 'eventId', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Date', 'Fixed', 'Eventid', 'ClassKey', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'date', 'fixed', 'eventid', 'classKey', ),
+        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID, DateOptionPeer::DATE, DateOptionPeer::FIXED, DateOptionPeer::EVENTID, DateOptionPeer::CLASS_KEY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DATE', 'FIXED', 'EVENTID', 'CLASS_KEY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'date', 'fixed', 'eventId', 'class_key', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -78,12 +99,12 @@ abstract class BaseDateOptionPeer
      * e.g. DateOptionPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Date' => 1, 'Fixed' => 2, 'Eventid' => 3, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventid' => 3, ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID => 0, DateOptionPeer::DATE => 1, DateOptionPeer::FIXED => 2, DateOptionPeer::EVENTID => 3, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DATE' => 1, 'FIXED' => 2, 'EVENTID' => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventId' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Date' => 1, 'Fixed' => 2, 'Eventid' => 3, 'ClassKey' => 4, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventid' => 3, 'classKey' => 4, ),
+        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID => 0, DateOptionPeer::DATE => 1, DateOptionPeer::FIXED => 2, DateOptionPeer::EVENTID => 3, DateOptionPeer::CLASS_KEY => 4, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DATE' => 1, 'FIXED' => 2, 'EVENTID' => 3, 'CLASS_KEY' => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventId' => 3, 'class_key' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -161,11 +182,13 @@ abstract class BaseDateOptionPeer
             $criteria->addSelectColumn(DateOptionPeer::DATE);
             $criteria->addSelectColumn(DateOptionPeer::FIXED);
             $criteria->addSelectColumn(DateOptionPeer::EVENTID);
+            $criteria->addSelectColumn(DateOptionPeer::CLASS_KEY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.date');
             $criteria->addSelectColumn($alias . '.fixed');
             $criteria->addSelectColumn($alias . '.eventId');
+            $criteria->addSelectColumn($alias . '.class_key');
         }
     }
 
@@ -418,8 +441,6 @@ abstract class BaseDateOptionPeer
     {
         $results = array();
 
-        // set the class once to avoid overhead in the loop
-        $cls = DateOptionPeer::getOMClass();
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $key = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
@@ -429,6 +450,9 @@ abstract class BaseDateOptionPeer
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
+                // class must be set each time from the record row
+                $cls = DateOptionPeer::getOMClass($row, 0);
+                $cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
@@ -457,7 +481,7 @@ abstract class BaseDateOptionPeer
             // $obj->hydrate($row, $startcol, true); // rehydrate
             $col = $startcol + DateOptionPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = DateOptionPeer::OM_CLASS;
+            $cls = DateOptionPeer::getOMClass($row, $startcol);
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
             DateOptionPeer::addInstanceToPool($obj, $key);
@@ -553,7 +577,8 @@ abstract class BaseDateOptionPeer
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
 
-                $cls = DateOptionPeer::getOMClass();
+                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
@@ -565,7 +590,8 @@ abstract class BaseDateOptionPeer
                 $obj2 = EventPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $cls = EventPeer::getOMClass();
+                    $omClass = EventPeer::getOMClass($row, $startcol);
+                    $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol);
@@ -672,7 +698,8 @@ abstract class BaseDateOptionPeer
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
-                $cls = DateOptionPeer::getOMClass();
+                $omClass = DateOptionPeer::getOMClass($row, 0);
+        $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
@@ -686,7 +713,8 @@ abstract class BaseDateOptionPeer
                 $obj2 = EventPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $cls = EventPeer::getOMClass();
+                    $omClass = EventPeer::getOMClass($row, $startcol2);
+          $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
@@ -728,14 +756,41 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * The class that the Peer will make instances of.
+     * The returned Class will contain objects of the default type or
+     * objects that inherit from the default.
      *
-     *
-     * @return string ClassName
+     * @param      array $row PropelPDO result row.
+     * @param      int $colnum Column to examine for OM class information (first is 0).
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
      */
     public static function getOMClass($row = 0, $colnum = 0)
     {
-        return DateOptionPeer::OM_CLASS;
+        try {
+
+            $omClass = null;
+            $classKey = $row[$colnum + 4];
+
+            switch ($classKey) {
+
+                case DateOptionPeer::CLASSKEY_STANDARD:
+                    $omClass = DateOptionPeer::CLASSNAME_STANDARD;
+                    break;
+
+                case DateOptionPeer::CLASSKEY_ONEONE:
+                    $omClass = DateOptionPeer::CLASSNAME_ONEONE;
+                    break;
+
+                default:
+                    $omClass = DateOptionPeer::OM_CLASS;
+
+            } // switch
+
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get OM class.', $e);
+        }
+
+        return $omClass;
     }
 
     /**
