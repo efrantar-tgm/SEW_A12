@@ -27,31 +27,16 @@ class EventListForm {
 	 * Shows all fetched Events
 	 */
 	public function show(){
-	
-		echo "<div class='header'> Meine Events </div>
-				<br />
+		echo "			
+			<form action='EventCreate.php' method='post'>
+    		<input type='submit' value='New Event'>
+			</form>
+			";
+
+		echo "<div class='header'> Meine Events 
+			</div><br />
 			 ";
 			 
-		for($e = 0; $e < count($this->my_events) ; $e++){
-			echo '<table width="50%">
-				  	<td class="zelle">
-						<a class="event" style="color: #584A84;" href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'
-							.$this->my_events[$e]->getName().'
-						</a>
-						</td>
-						</table>
-			
-						<hr color="#AAAAAA" width="50%" align="left"/>
-					 ';
-		}
-	
-		echo '<br /><hr color="#000000" size="1px"/><br />
-
-	
-		<div class="header"> Events an denen ich teilnehme </div>
-		<br />
-		';
-	
 		for($i = 0; $i < count($this->invited) ; $i++){
 			echo '<table width="50%" border="1px" bordercolor="#FFFFFF">
 				  	<td class="zelle">
@@ -63,6 +48,26 @@ class EventListForm {
 			
 						<hr color="#AAAAAA" width="50%" align="left"/>
 				   ';
+		}
+	
+		echo '<br /><hr color="#000000" size="1px"/><br />
+
+	
+		<div class="header"> Events an denen ich teilnehme </div>
+		<br />
+		';
+
+		for($e = 0; $e < count($this->my_events) ; $e++){
+			echo '<table width="50%">
+				  	<td class="zelle">
+						<a class="event" style="color: #584A84;" href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'
+							.$this->my_events[$e]->getName().'
+						</a>
+						</td>
+						</table>
+			
+						<hr color="#AAAAAA" width="50%" align="left"/>
+					 ';
 		}
 	}
 }
