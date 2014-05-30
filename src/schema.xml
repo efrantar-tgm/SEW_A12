@@ -26,25 +26,17 @@
 		<foreign-key foreignTable="events" onDelete="cascade">
     	<reference local="eventId" foreign="id" />
   	</foreign-key>
-	</table>
 
-	<table name="oneOneOptions" phpName="OneOneOption">
-		<behavior name="concrete_inheritance">
-    	<parameter name="extends" value="dateOptions" />
-  	</behavior>
-  	
+		<column name="class_key" type="varchar" inheritance="single">
+			<inheritance key="STANDARD" class="StandardOption" />
+			<inheritance key="ONEONE" class="OneOneOption" />		
+		</column>
+		
+		<column name="choices" type="object" />
 		<column name="userName" type="varchar" />
 		<foreign-key foreignTable="users" onDelete="cascade">
 			<reference local="userName" foreign="name" />
 		</foreign-key>
-	</table>
-
-	<table name="standardOptions" phpName="StandardOption">
-		<behavior name="concrete_inheritance">
-    	<parameter name="extends" value="dateOptions" />
-  	</behavior>
-  
-		<column name="choices" type="object" />
 	</table>
 
 	<table name="invitations" phpName="Invitation" isCrossRef="true">

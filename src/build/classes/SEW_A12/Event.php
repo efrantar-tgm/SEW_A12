@@ -12,10 +12,19 @@ abstract class Event extends BaseEvent // abstract because we only want instance
 	const PARTICIPANT = 1;
 
 	/**
+	 * Returns the event identified by the given id.	
+	 * @param int the id of the event to find
+	 * @return Event the event with the given id (if exists); null otherwise
+	 */
+	public static function findById($id) {
+		return EventQuery::create()->findPk($id);
+	}
+	
+	/**
 	 * Returns the role the given user has in this event.
-   * @param MyUser the user, whose role should be determined
-   * @return int the role of the user in this event (one of the constants defined in this class)
-   */
+     * @param MyUser the user, whose role should be determined
+     * @return int the role of the user in this event (one of the constants defined in this class)
+     */
 	public function getRole($user) {
 		$invitation = $this->getInvitation($user);
 
@@ -24,18 +33,18 @@ abstract class Event extends BaseEvent // abstract because we only want instance
 	}
 
 	/**
-   * Returns the inivtation for this event (if exists) and the given user.
-   * @param MyUser the user, whose invitation should be returned
-   * @return Invitation the invitation for this user; null if not exists
-   */
+     * Returns the inivtation for this event (if exists) and the given user.
+     * @param MyUser the user, whose invitation should be returned
+     * @return Invitation the invitation for this user; null if not exists
+     */
 	public function getInvitation($user) {
 		return InvitationQuery::create() -> findPk(array($user->getName(), $this->getId()));
 	}
 
 	/**
-   * Determines if all participants have already polled
-   * @return boolean true if the poll is finished; false otherwise
-   */
+     * Determines if all participants have already polled
+     * @return boolean true if the poll is finished; false otherwise
+     */
 	public function pollFinished() {
 		$finished = true;
 		$dateOptions = $this->getDateOptions();

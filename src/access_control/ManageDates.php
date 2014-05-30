@@ -10,9 +10,9 @@ require_once("../PropelInit.php");
 class ManageDates extends Permission {
 	/**
 	 * Creates a new ManageDates permission for the given user and event.
-   * @param Event the event to create the permission for
-   * @param MyUser the user to create the permission for
-   */
+     * @param Event the event to create the permission for
+     * @param MyUser the user to create the permission for
+     */
 	public function __construct($event, $user) {
 		$this->event = $event;
 		$this->user = $user;
@@ -28,19 +28,19 @@ class ManageDates extends Permission {
 	}
 
 	/**
-   * Removes the given option from the event.
-   * @param DateOption the option to remove
-   */
+     * Removes the given option from the event.
+     * @param DateOption the option to remove
+     */
 	public function removeOption($option) {
 		$this->event->removeDateOption($option); // this should also automatically delete the removed option from the database
 		$this->event->save();
 	}
 
 	/**
-   * Edits the date in the given option.
-   * @param DateOption the option to edit the date in
+     * Edits the date in the given option.
+     * @param DateOption the option to edit the date in
 	 * @param Date the new date to update in the given option
-   */
+     */
 	public function editOption($option, $newDate) {
 		$option->setDate($newDate);
 		$option->setFixed(false); // a changed option cannot be fixed already

@@ -18,7 +18,7 @@ abstract class BaseEventPeer
     const TABLE_NAME = 'events';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'Event';
+    const OM_CLASS = '';
 
     /** the related TableMap class for this table */
     const TM_CLASS = 'EventTableMap';
@@ -480,6 +480,11 @@ abstract class BaseEventPeer
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
+            $col = $startcol + EventPeer::NUM_HYDRATE_COLUMNS;
+        } elseif (null == $key) {
+            // empty resultset, probably from a left join
+            // since this table is abstract, we can't hydrate an empty object
+            $obj = null;
             $col = $startcol + EventPeer::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = EventPeer::getOMClass($row, $startcol);

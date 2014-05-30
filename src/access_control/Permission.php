@@ -6,7 +6,7 @@
  */
 abstract class Permission {
 
-	/* choose from the following different permission */
+	/* you can choose from the following different permission */
 	const MANAGE_DATES = 0;
 	const MANAGE_COMMENTS = 1;
 	const MANAGE_INVITATIONS = 2;

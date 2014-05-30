@@ -18,19 +18,19 @@ abstract class BaseDateOptionPeer
     const TABLE_NAME = 'dateOptions';
 
     /** the related Propel class for this table */
-    const OM_CLASS = 'DateOption';
+    const OM_CLASS = '';
 
     /** the related TableMap class for this table */
     const TM_CLASS = 'DateOptionTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /** the column name for the id field */
     const ID = 'dateOptions.id';
@@ -46,6 +46,12 @@ abstract class BaseDateOptionPeer
 
     /** the column name for the class_key field */
     const CLASS_KEY = 'dateOptions.class_key';
+
+    /** the column name for the choices field */
+    const CHOICES = 'dateOptions.choices';
+
+    /** the column name for the userName field */
+    const USERNAME = 'dateOptions.userName';
 
     /** A key representing a particular subclass */
     const CLASSKEY_STANDARD = 'STANDARD';
@@ -84,12 +90,12 @@ abstract class BaseDateOptionPeer
      * e.g. DateOptionPeer::$fieldNames[DateOptionPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Date', 'Fixed', 'Eventid', 'ClassKey', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'date', 'fixed', 'eventid', 'classKey', ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID, DateOptionPeer::DATE, DateOptionPeer::FIXED, DateOptionPeer::EVENTID, DateOptionPeer::CLASS_KEY, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DATE', 'FIXED', 'EVENTID', 'CLASS_KEY', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'date', 'fixed', 'eventId', 'class_key', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Date', 'Fixed', 'Eventid', 'ClassKey', 'Choices', 'Username', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'date', 'fixed', 'eventid', 'classKey', 'choices', 'username', ),
+        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID, DateOptionPeer::DATE, DateOptionPeer::FIXED, DateOptionPeer::EVENTID, DateOptionPeer::CLASS_KEY, DateOptionPeer::CHOICES, DateOptionPeer::USERNAME, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DATE', 'FIXED', 'EVENTID', 'CLASS_KEY', 'CHOICES', 'USERNAME', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'date', 'fixed', 'eventId', 'class_key', 'choices', 'userName', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -99,12 +105,12 @@ abstract class BaseDateOptionPeer
      * e.g. DateOptionPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Date' => 1, 'Fixed' => 2, 'Eventid' => 3, 'ClassKey' => 4, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventid' => 3, 'classKey' => 4, ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID => 0, DateOptionPeer::DATE => 1, DateOptionPeer::FIXED => 2, DateOptionPeer::EVENTID => 3, DateOptionPeer::CLASS_KEY => 4, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DATE' => 1, 'FIXED' => 2, 'EVENTID' => 3, 'CLASS_KEY' => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventId' => 3, 'class_key' => 4, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Date' => 1, 'Fixed' => 2, 'Eventid' => 3, 'ClassKey' => 4, 'Choices' => 5, 'Username' => 6, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventid' => 3, 'classKey' => 4, 'choices' => 5, 'username' => 6, ),
+        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID => 0, DateOptionPeer::DATE => 1, DateOptionPeer::FIXED => 2, DateOptionPeer::EVENTID => 3, DateOptionPeer::CLASS_KEY => 4, DateOptionPeer::CHOICES => 5, DateOptionPeer::USERNAME => 6, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DATE' => 1, 'FIXED' => 2, 'EVENTID' => 3, 'CLASS_KEY' => 4, 'CHOICES' => 5, 'USERNAME' => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventId' => 3, 'class_key' => 4, 'choices' => 5, 'userName' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -183,12 +189,16 @@ abstract class BaseDateOptionPeer
             $criteria->addSelectColumn(DateOptionPeer::FIXED);
             $criteria->addSelectColumn(DateOptionPeer::EVENTID);
             $criteria->addSelectColumn(DateOptionPeer::CLASS_KEY);
+            $criteria->addSelectColumn(DateOptionPeer::CHOICES);
+            $criteria->addSelectColumn(DateOptionPeer::USERNAME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.date');
             $criteria->addSelectColumn($alias . '.fixed');
             $criteria->addSelectColumn($alias . '.eventId');
             $criteria->addSelectColumn($alias . '.class_key');
+            $criteria->addSelectColumn($alias . '.choices');
+            $criteria->addSelectColumn($alias . '.userName');
         }
     }
 
@@ -480,6 +490,11 @@ abstract class BaseDateOptionPeer
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
             $col = $startcol + DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        } elseif (null == $key) {
+            // empty resultset, probably from a left join
+            // since this table is abstract, we can't hydrate an empty object
+            $obj = null;
+            $col = $startcol + DateOptionPeer::NUM_HYDRATE_COLUMNS;
         } else {
             $cls = DateOptionPeer::getOMClass($row, $startcol);
             $obj = new $cls();
@@ -528,6 +543,57 @@ abstract class BaseDateOptionPeer
         }
 
         $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related MyUser table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinMyUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            DateOptionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -612,6 +678,74 @@ abstract class BaseDateOptionPeer
 
 
     /**
+     * Selects a collection of DateOption objects pre-filled with their MyUser objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of DateOption objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        }
+
+        DateOptionPeer::addSelectColumns($criteria);
+        $startcol = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        MyUserPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                DateOptionPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = MyUserPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $cls = MyUserPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    MyUserPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (DateOption) to $obj2 (MyUser)
+                $obj2->addDateOption($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
      * Returns the number of rows matching criteria, joining all related tables
      *
      * @param      Criteria $criteria
@@ -648,6 +782,8 @@ abstract class BaseDateOptionPeer
         }
 
         $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -686,7 +822,12 @@ abstract class BaseDateOptionPeer
         EventPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
 
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + MyUserPeer::NUM_HYDRATE_COLUMNS;
+
         $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
@@ -724,6 +865,277 @@ abstract class BaseDateOptionPeer
                 // Add the $obj1 (DateOption) to the collection in $obj2 (Event)
                 $obj2->addDateOption($obj1);
             } // if joined row not null
+
+            // Add objects for joined MyUser rows
+
+            $key3 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = MyUserPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $cls = MyUserPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    MyUserPeer::addInstanceToPool($obj3, $key3);
+                } // if obj3 loaded
+
+                // Add the $obj1 (DateOption) to the collection in $obj3 (MyUser)
+                $obj3->addDateOption($obj1);
+            } // if joined row not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related Event table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptEvent(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            DateOptionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related MyUser table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptMyUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            DateOptionPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
+    }
+
+
+    /**
+     * Selects a collection of DateOption objects pre-filled with all related objects except Event.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of DateOption objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptEvent(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        }
+
+        DateOptionPeer::addSelectColumns($criteria);
+        $startcol2 = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + MyUserPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                DateOptionPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined MyUser rows
+
+                $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = MyUserPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $cls = MyUserPeer::getOMClass();
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    MyUserPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (DateOption) to the collection in $obj2 (MyUser)
+                $obj2->addDateOption($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of DateOption objects pre-filled with all related objects except MyUser.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of DateOption objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        }
+
+        DateOptionPeer::addSelectColumns($criteria);
+        $startcol2 = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+
+        EventPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                DateOptionPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined Event rows
+
+                $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = EventPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $omClass = EventPeer::getOMClass($row, $startcol2);
+            $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    EventPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (DateOption) to the collection in $obj2 (Event)
+                $obj2->addDateOption($obj1);
+
+            } // if joined row is not null
 
             $results[] = $obj1;
         }

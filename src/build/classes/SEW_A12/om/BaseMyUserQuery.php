@@ -14,6 +14,10 @@
  * @method MyUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method MyUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method MyUserQuery leftJoinDateOption($relationAlias = null) Adds a LEFT JOIN clause to the query using the DateOption relation
+ * @method MyUserQuery rightJoinDateOption($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DateOption relation
+ * @method MyUserQuery innerJoinDateOption($relationAlias = null) Adds a INNER JOIN clause to the query using the DateOption relation
+ *
  * @method MyUserQuery leftJoinInvitation($relationAlias = null) Adds a LEFT JOIN clause to the query using the Invitation relation
  * @method MyUserQuery rightJoinInvitation($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Invitation relation
  * @method MyUserQuery innerJoinInvitation($relationAlias = null) Adds a INNER JOIN clause to the query using the Invitation relation
@@ -246,6 +250,80 @@ abstract class BaseMyUserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(MyUserPeer::NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query by a related DateOption object
+     *
+     * @param   DateOption|PropelObjectCollection $dateOption  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 MyUserQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByDateOption($dateOption, $comparison = null)
+    {
+        if ($dateOption instanceof DateOption) {
+            return $this
+                ->addUsingAlias(MyUserPeer::NAME, $dateOption->getUsername(), $comparison);
+        } elseif ($dateOption instanceof PropelObjectCollection) {
+            return $this
+                ->useDateOptionQuery()
+                ->filterByPrimaryKeys($dateOption->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDateOption() only accepts arguments of type DateOption or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DateOption relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return MyUserQuery The current query, for fluid interface
+     */
+    public function joinDateOption($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DateOption');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DateOption');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DateOption relation DateOption object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   DateOptionQuery A secondary query class using the current class as primary query
+     */
+    public function useDateOptionQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinDateOption($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DateOption', 'DateOptionQuery');
     }
 
     /**

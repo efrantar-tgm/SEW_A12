@@ -1,19 +1,10 @@
 <?php
-
-
-
 /**
- * Skeleton subclass for representing a row from one of the subclasses of the 'dateOptions' table.
- *
- *
- *
- * You should add additional methods to this class to meet the
- * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- *
- * @package    propel.generator.SEW_A12
+ * This is the DateOption-class for one-one-events.
+ * @author Elias Frantar
+ * @version 26.5.2014
  */
-class OneOneOption extends BaseDateOption {
+class OneOneOption extends DateOption {
 
     /**
      * Constructs a new OneOneOption class, setting the class_key column to DateOptionPeer::CLASSKEY_ONEONE.
@@ -24,4 +15,23 @@ class OneOneOption extends BaseDateOption {
         $this->setClassKey(DateOptionPeer::CLASSKEY_ONEONE);
     }
 
-} // OneOneOption
+		/*
+     * @see DateOption
+     */
+		public function poll($user, $accept) {
+			if($accept) { // only care about accepting polls
+				if(is_empty($this->getUser())) { // do not override a previous user
+					$this->setUser($user);
+					return true; // success				
+				}
+			}
+			return false; // it has already been polled before
+		}
+
+		/**
+		 * @see DateOption
+		 */
+		public function pollFinished($event) {
+			return !is_null($this->getUser());
+		}
+}

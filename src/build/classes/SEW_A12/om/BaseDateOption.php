@@ -61,9 +61,33 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     protected $class_key;
 
     /**
+     * The value for the choices field.
+     * @var
+     */
+    protected $choices;
+
+    /**
+     * The unserialized $choices value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var        object
+     */
+    protected $choices_unserialized;
+
+    /**
+     * The value for the username field.
+     * @var        string
+     */
+    protected $username;
+
+    /**
      * @var        Event
      */
     protected $aEvent;
+
+    /**
+     * @var        MyUser
+     */
+    protected $aMyUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -123,16 +147,16 @@ abstract class BaseDateOption extends BaseObject implements Persistent
      *
      * @param string $format The date/time format string (either date()-style or strftime()-style).
      *				 If format is null, then the raw DateTime object will be returned.
-     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
+     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDate($format = '%x')
+    public function getDate($format = 'Y-m-d H:i:s')
     {
         if ($this->date === null) {
             return null;
         }
 
-        if ($this->date === '0000-00-00') {
+        if ($this->date === '0000-00-00 00:00:00') {
             // while technically this is not a default value of null,
             // this seems to be closest in meaning.
             return null;
@@ -191,6 +215,31 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [choices] column value.
+     *
+     * @return
+     */
+    public function getChoices()
+    {
+        if (null == $this->choices_unserialized && null !== $this->choices) {
+            $this->choices_unserialized = unserialize($this->choices);
+        }
+
+        return $this->choices_unserialized;
+    }
+
+    /**
+     * Get the [username] column value.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+
+        return $this->username;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param  int $v new value
@@ -222,8 +271,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->date !== null || $dt !== null) {
-            $currentDateAsString = ($this->date !== null && $tmpDt = new DateTime($this->date)) ? $tmpDt->format('Y-m-d') : null;
-            $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
+            $currentDateAsString = ($this->date !== null && $tmpDt = new DateTime($this->date)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
             if ($currentDateAsString !== $newDateAsString) {
                 $this->date = $newDateAsString;
                 $this->modifiedColumns[] = DateOptionPeer::DATE;
@@ -310,6 +359,49 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     } // setClassKey()
 
     /**
+     * Set the value of [choices] column.
+     *
+     * @param   $v new value
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function setChoices($v)
+    {
+        if ($this->choices_unserialized !== $v) {
+            $this->choices_unserialized = $v;
+            $this->choices = serialize($v);
+            $this->modifiedColumns[] = DateOptionPeer::CHOICES;
+        }
+
+
+        return $this;
+    } // setChoices()
+
+    /**
+     * Set the value of [username] column.
+     *
+     * @param  string $v new value
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function setUsername($v)
+    {
+        if ($v !== null && is_numeric($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->username !== $v) {
+            $this->username = $v;
+            $this->modifiedColumns[] = DateOptionPeer::USERNAME;
+        }
+
+        if ($this->aMyUser !== null && $this->aMyUser->getName() !== $v) {
+            $this->aMyUser = null;
+        }
+
+
+        return $this;
+    } // setUsername()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -350,6 +442,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             $this->fixed = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
             $this->eventid = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
             $this->class_key = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->choices = $row[$startcol + 5];
+            $this->username = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -359,7 +453,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             }
             $this->postHydrate($row, $startcol, $rehydrate);
 
-            return $startcol + 5; // 5 = DateOptionPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = DateOptionPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating DateOption object", $e);
@@ -384,6 +478,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
 
         if ($this->aEvent !== null && $this->eventid !== $this->aEvent->getId()) {
             $this->aEvent = null;
+        }
+        if ($this->aMyUser !== null && $this->username !== $this->aMyUser->getName()) {
+            $this->aMyUser = null;
         }
     } // ensureConsistency
 
@@ -425,6 +522,7 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($deep) {  // also de-associate any related objects?
 
             $this->aEvent = null;
+            $this->aMyUser = null;
         } // if (deep)
     }
 
@@ -550,6 +648,13 @@ abstract class BaseDateOption extends BaseObject implements Persistent
                 $this->setEvent($this->aEvent);
             }
 
+            if ($this->aMyUser !== null) {
+                if ($this->aMyUser->isModified() || $this->aMyUser->isNew()) {
+                    $affectedRows += $this->aMyUser->save($con);
+                }
+                $this->setMyUser($this->aMyUser);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -602,6 +707,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($this->isColumnModified(DateOptionPeer::CLASS_KEY)) {
             $modifiedColumns[':p' . $index++]  = '`class_key`';
         }
+        if ($this->isColumnModified(DateOptionPeer::CHOICES)) {
+            $modifiedColumns[':p' . $index++]  = '`choices`';
+        }
+        if ($this->isColumnModified(DateOptionPeer::USERNAME)) {
+            $modifiedColumns[':p' . $index++]  = '`userName`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `dateOptions` (%s) VALUES (%s)',
@@ -627,6 +738,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
                         break;
                     case '`class_key`':
                         $stmt->bindValue($identifier, $this->class_key, PDO::PARAM_STR);
+                        break;
+                    case '`choices`':
+                        $stmt->bindValue($identifier, $this->choices, PDO::PARAM_STR);
+                        break;
+                    case '`userName`':
+                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -733,6 +850,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->aMyUser !== null) {
+                if (!$this->aMyUser->validate($columns)) {
+                    $failureMap = array_merge($failureMap, $this->aMyUser->getValidationFailures());
+                }
+            }
+
 
             if (($retval = DateOptionPeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
@@ -789,6 +912,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             case 4:
                 return $this->getClassKey();
                 break;
+            case 5:
+                return $this->getChoices();
+                break;
+            case 6:
+                return $this->getUsername();
+                break;
             default:
                 return null;
                 break;
@@ -823,6 +952,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             $keys[2] => $this->getFixed(),
             $keys[3] => $this->getEventid(),
             $keys[4] => $this->getClassKey(),
+            $keys[5] => $this->getChoices(),
+            $keys[6] => $this->getUsername(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -832,6 +963,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($includeForeignObjects) {
             if (null !== $this->aEvent) {
                 $result['Event'] = $this->aEvent->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aMyUser) {
+                $result['MyUser'] = $this->aMyUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -882,6 +1016,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             case 4:
                 $this->setClassKey($value);
                 break;
+            case 5:
+                $this->setChoices($value);
+                break;
+            case 6:
+                $this->setUsername($value);
+                break;
         } // switch()
     }
 
@@ -911,6 +1051,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if (array_key_exists($keys[2], $arr)) $this->setFixed($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setEventid($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setClassKey($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setChoices($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setUsername($arr[$keys[6]]);
     }
 
     /**
@@ -927,6 +1069,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         if ($this->isColumnModified(DateOptionPeer::FIXED)) $criteria->add(DateOptionPeer::FIXED, $this->fixed);
         if ($this->isColumnModified(DateOptionPeer::EVENTID)) $criteria->add(DateOptionPeer::EVENTID, $this->eventid);
         if ($this->isColumnModified(DateOptionPeer::CLASS_KEY)) $criteria->add(DateOptionPeer::CLASS_KEY, $this->class_key);
+        if ($this->isColumnModified(DateOptionPeer::CHOICES)) $criteria->add(DateOptionPeer::CHOICES, $this->choices);
+        if ($this->isColumnModified(DateOptionPeer::USERNAME)) $criteria->add(DateOptionPeer::USERNAME, $this->username);
 
         return $criteria;
     }
@@ -994,6 +1138,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         $copyObj->setFixed($this->getFixed());
         $copyObj->setEventid($this->getEventid());
         $copyObj->setClassKey($this->getClassKey());
+        $copyObj->setChoices($this->getChoices());
+        $copyObj->setUsername($this->getUsername());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1105,6 +1251,58 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     }
 
     /**
+     * Declares an association between this object and a MyUser object.
+     *
+     * @param                  MyUser $v
+     * @return DateOption The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setMyUser(MyUser $v = null)
+    {
+        if ($v === null) {
+            $this->setUsername(NULL);
+        } else {
+            $this->setUsername($v->getName());
+        }
+
+        $this->aMyUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the MyUser object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDateOption($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated MyUser object
+     *
+     * @param PropelPDO $con Optional Connection object.
+     * @param $doQuery Executes a query to get the object if required
+     * @return MyUser The associated MyUser object.
+     * @throws PropelException
+     */
+    public function getMyUser(PropelPDO $con = null, $doQuery = true)
+    {
+        if ($this->aMyUser === null && (($this->username !== "" && $this->username !== null)) && $doQuery) {
+            $this->aMyUser = MyUserQuery::create()->findPk($this->username, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aMyUser->addDateOptions($this);
+             */
+        }
+
+        return $this->aMyUser;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1114,6 +1312,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         $this->fixed = null;
         $this->eventid = null;
         $this->class_key = null;
+        $this->choices = null;
+        $this->choices_unserialized = null;
+        $this->username = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->alreadyInClearAllReferencesDeep = false;
@@ -1140,11 +1341,15 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             if ($this->aEvent instanceof Persistent) {
               $this->aEvent->clearAllReferences($deep);
             }
+            if ($this->aMyUser instanceof Persistent) {
+              $this->aMyUser->clearAllReferences($deep);
+            }
 
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
         $this->aEvent = null;
+        $this->aMyUser = null;
     }
 
     /**

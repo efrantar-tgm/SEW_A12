@@ -11,12 +11,16 @@
  * @method DateOptionQuery orderByFixed($order = Criteria::ASC) Order by the fixed column
  * @method DateOptionQuery orderByEventid($order = Criteria::ASC) Order by the eventId column
  * @method DateOptionQuery orderByClassKey($order = Criteria::ASC) Order by the class_key column
+ * @method DateOptionQuery orderByChoices($order = Criteria::ASC) Order by the choices column
+ * @method DateOptionQuery orderByUsername($order = Criteria::ASC) Order by the userName column
  *
  * @method DateOptionQuery groupById() Group by the id column
  * @method DateOptionQuery groupByDate() Group by the date column
  * @method DateOptionQuery groupByFixed() Group by the fixed column
  * @method DateOptionQuery groupByEventid() Group by the eventId column
  * @method DateOptionQuery groupByClassKey() Group by the class_key column
+ * @method DateOptionQuery groupByChoices() Group by the choices column
+ * @method DateOptionQuery groupByUsername() Group by the userName column
  *
  * @method DateOptionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method DateOptionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -26,6 +30,10 @@
  * @method DateOptionQuery rightJoinEvent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Event relation
  * @method DateOptionQuery innerJoinEvent($relationAlias = null) Adds a INNER JOIN clause to the query using the Event relation
  *
+ * @method DateOptionQuery leftJoinMyUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the MyUser relation
+ * @method DateOptionQuery rightJoinMyUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the MyUser relation
+ * @method DateOptionQuery innerJoinMyUser($relationAlias = null) Adds a INNER JOIN clause to the query using the MyUser relation
+ *
  * @method DateOption findOne(PropelPDO $con = null) Return the first DateOption matching the query
  * @method DateOption findOneOrCreate(PropelPDO $con = null) Return the first DateOption matching the query, or a new DateOption object populated from the query conditions when no match is found
  *
@@ -33,12 +41,16 @@
  * @method DateOption findOneByFixed(boolean $fixed) Return the first DateOption filtered by the fixed column
  * @method DateOption findOneByEventid(int $eventId) Return the first DateOption filtered by the eventId column
  * @method DateOption findOneByClassKey(string $class_key) Return the first DateOption filtered by the class_key column
+ * @method DateOption findOneByChoices( $choices) Return the first DateOption filtered by the choices column
+ * @method DateOption findOneByUsername(string $userName) Return the first DateOption filtered by the userName column
  *
  * @method array findById(int $id) Return DateOption objects filtered by the id column
  * @method array findByDate(string $date) Return DateOption objects filtered by the date column
  * @method array findByFixed(boolean $fixed) Return DateOption objects filtered by the fixed column
  * @method array findByEventid(int $eventId) Return DateOption objects filtered by the eventId column
  * @method array findByClassKey(string $class_key) Return DateOption objects filtered by the class_key column
+ * @method array findByChoices( $choices) Return DateOption objects filtered by the choices column
+ * @method array findByUsername(string $userName) Return DateOption objects filtered by the userName column
  *
  * @package    propel.generator.SEW_A12.om
  */
@@ -146,7 +158,7 @@ abstract class BaseDateOptionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `id`, `date`, `fixed`, `eventId`, `class_key` FROM `dateOptions` WHERE `id` = :p0';
+        $sql = 'SELECT `id`, `date`, `fixed`, `eventId`, `class_key`, `choices`, `userName` FROM `dateOptions` WHERE `id` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -422,6 +434,52 @@ abstract class BaseDateOptionQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the choices column
+     *
+     * @param     mixed $choices The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DateOptionQuery The current query, for fluid interface
+     */
+    public function filterByChoices($choices = null, $comparison = null)
+    {
+        if (is_object($choices)) {
+            $choices = serialize($choices);
+        }
+
+        return $this->addUsingAlias(DateOptionPeer::CHOICES, $choices, $comparison);
+    }
+
+    /**
+     * Filter the query on the userName column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUsername('fooValue');   // WHERE userName = 'fooValue'
+     * $query->filterByUsername('%fooValue%'); // WHERE userName LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $username The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return DateOptionQuery The current query, for fluid interface
+     */
+    public function filterByUsername($username = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($username)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $username)) {
+                $username = str_replace('*', '%', $username);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DateOptionPeer::USERNAME, $username, $comparison);
+    }
+
+    /**
      * Filter the query by a related Event object
      *
      * @param   Event|PropelObjectCollection $event The related object(s) to use as filter
@@ -495,6 +553,82 @@ abstract class BaseDateOptionQuery extends ModelCriteria
         return $this
             ->joinEvent($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Event', 'EventQuery');
+    }
+
+    /**
+     * Filter the query by a related MyUser object
+     *
+     * @param   MyUser|PropelObjectCollection $myUser The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return                 DateOptionQuery The current query, for fluid interface
+     * @throws PropelException - if the provided filter is invalid.
+     */
+    public function filterByMyUser($myUser, $comparison = null)
+    {
+        if ($myUser instanceof MyUser) {
+            return $this
+                ->addUsingAlias(DateOptionPeer::USERNAME, $myUser->getName(), $comparison);
+        } elseif ($myUser instanceof PropelObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(DateOptionPeer::USERNAME, $myUser->toKeyValue('PrimaryKey', 'Name'), $comparison);
+        } else {
+            throw new PropelException('filterByMyUser() only accepts arguments of type MyUser or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the MyUser relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return DateOptionQuery The current query, for fluid interface
+     */
+    public function joinMyUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('MyUser');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'MyUser');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the MyUser relation MyUser object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   MyUserQuery A secondary query class using the current class as primary query
+     */
+    public function useMyUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinMyUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'MyUser', 'MyUserQuery');
     }
 
     /**

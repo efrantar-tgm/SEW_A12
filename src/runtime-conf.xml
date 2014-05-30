@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This is the Propel runtime-configuration for the Einladungsverwaltungs-application -->
+<!-- This is the Propel runtime-configuration for the SEW_A12-project -->
 
 <config>
   <propel>

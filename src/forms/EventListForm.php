@@ -28,8 +28,8 @@ class EventListForm {
 	 */
 	public function show(){
 		echo "			
-			<form action='EventCreate.php' method='post'>
-    		<input type='submit' value='New Event'>
+			<form action='../userCake/EventList.php' method='post'>
+    		<input type='submit' name='createEvent' value='New Event'>
 			</form>
 			";
 

@@ -8,16 +8,16 @@ class EventCreateForm {
 	var $submit;
 
 	/**
-   * Creates the new form, which submits to the given php-file.
-   * @param String the full path to the php-file to call on submit
-   */
+     * Creates the new form, which submits to the given php-file.
+     * @param String the full path to the php-file to call on submit
+     */
 	public function __construct($submit) {
 		$this->submit = $submit;
 	}
 	
 	/**
-   * Displays the GUI.
-   */
+     * Displays the GUI.
+     */
 	public function show() {
 		echo 
 		"

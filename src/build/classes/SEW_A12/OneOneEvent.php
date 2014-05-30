@@ -13,7 +13,7 @@
  *
  * @package    propel.generator.SEW_A12
  */
-class OneOneEvent extends BaseEvent {
+class OneOneEvent extends Event {
 
     /**
      * Constructs a new OneOneEvent class, setting the class_key column to EventPeer::CLASSKEY_ONEONE.

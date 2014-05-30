@@ -13,7 +13,7 @@
  *
  * @package    propel.generator.SEW_A12
  */
-class StandardEvent extends BaseEvent {
+class StandardEvent extends Event {
 
     /**
      * Constructs a new StandardEvent class, setting the class_key column to EventPeer::CLASSKEY_STANDARD.

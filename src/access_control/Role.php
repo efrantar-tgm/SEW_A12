@@ -15,10 +15,10 @@ class Role {
 	
 	/**
 	 * Creates a new role for the given user and event with the given permissions.
-   * @param int[] the types of the permissions this role should habe (only constants from Permission)
-   * @param MyUser the user of this role
-   * @param Event the event this role is for
-   */
+     * @param int[] the types of the permissions this role should habe (only constants from Permission)
+     * @param MyUser the user of this role
+     * @param Event the event this role is for
+   	 */
 	public function __construct($permissiontypes, $user, $event) {
 		$this->permissions = array();
 
@@ -40,9 +40,9 @@ class Role {
 
 	/**
 	 * Returns the implementation of the specified permission.
-   * @param int the type of the permission to return (a constant from Permission)
-   * @return Permission the implmentation of the given permission-type if exists and this role has access to; NULL otherwise
-   */
+   	 * @param int the type of the permission to return (a constant from Permission)
+   	 * @return Permission the implmentation of the given permission-type if exists and this role has access to; NULL otherwise
+   	 */
 	public function getPermission($permissiontype) {
 		return $this->permissions[$permissiontype];
 	}

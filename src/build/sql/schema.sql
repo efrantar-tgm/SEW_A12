@@ -39,12 +39,15 @@ DROP TABLE IF EXISTS `dateOptions`;
 CREATE TABLE `dateOptions`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `date` DATE NOT NULL,
+    `date` DATETIME NOT NULL,
     `fixed` TINYINT(1) DEFAULT 0,
     `eventId` INTEGER NOT NULL,
     `class_key` VARCHAR(255),
+    `choices` TEXT,
+    `userName` VARCHAR(255),
     PRIMARY KEY (`id`),
-    INDEX `dateOptions_FI_1` (`eventId`)
+    INDEX `dateOptions_FI_1` (`eventId`),
+    INDEX `dateOptions_FI_2` (`userName`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------

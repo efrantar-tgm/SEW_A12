@@ -1,8 +1,8 @@
 <?php
 /**
- * This is the GUI for creating events.
+ * This is the GUI for displaying event details. (for both 'STANDARD' and 'ONEONE')
  * @author Elias Frantar
- * @version 27.5.2014
+ * @version 30.5.2014
  */	
 class EventForm {
 	const TITLE = "Event | ";
@@ -17,9 +17,11 @@ class EventForm {
 	var $submit;
 
 	/**
-   * Creates the new form, which submits to the given php-file.
-   * @param String the full path to the php-file to call on submit
-   */
+     * Creates the new form for the given event and user, which submits to the given php-file.
+     * @param Event the event to display info from
+     * @param MyUser the user visiting this page
+     * @param String the full path to the php-file to call on submit
+     */
 	public function __construct($event, $user, $submit) {
 		$this->event = $event;
 		$this->user = $user;
@@ -29,15 +31,15 @@ class EventForm {
 	}
 	
 	/**
-   * Displays the GUI.
-   */
+     * Displays the GUI.
+     */
 	public function show() {
 		$this->loadBootstrap();
 
 		$this->openHtml(EventForm::TITLE.$this->event->getName());
 
 		echo "<h2>".$this->event->getName()."</h2>";
-
+	
 		if($this->event instanceof StandardEvent) {
 			$title = 'StandardEvent';		
 			$text = EventForm::STANDARD_TEXT;
@@ -54,9 +56,16 @@ class EventForm {
 			$this->displayAdminOptions();
 		}
 
+		$this->displayBackButton();
+
 		$this->closeHtml();
 	}
 
+	/**
+	 * Displays the notes for the user at the top.
+	 * @param $title the title of the note
+	 * @param $text the text of the note
+	 */
 	private function displayNote($title, $text) {
 		echo 
 		"
@@ -67,6 +76,9 @@ class EventForm {
 		";
 	}
 
+	/**
+	 * Displays the admin-options ('FixDate' and 'Settings')
+	 */
 	private function displayAdminOptions() {
 		echo 
 		"
@@ -75,17 +87,17 @@ class EventForm {
 				Fix Date
 				<span class='glyphicon glyphicon-lock'></span>
 			</button>
-			<button type='submit' class='btn btn-default' name='inviteUsers'>
-				Invite Users
-			</button>
-			<button type='submit' class='btn btn-danger'	name='deleteEvent'>
-				Delete
-				<span class='glyphicon glyphicon-trash'></span>
+			<button type='submit' class='btn btn-default' name='editEvent'>
+				Settings
+				<span class='glyphicon glyphicon-cog'></span>
 			</button>
 		</div>
 		";
 	}
 
+	/**
+	 * Displays the table with the user polls.
+	 */
 	private function displayTable() {
 			echo 
 			"
@@ -97,22 +109,11 @@ class EventForm {
 			$options = DateOptionQuery::create()
 				-> filterByEvent($this->event)
 				-> orderByDate()
-				-> select(array('date'))
 				-> find();
 			
 			echo "<thead><th></th>";
-			if($this->role == Event::ORGANIZER) {
-				echo 
-				"
-				<th style='text-align:center; vertical-align:middle'>
-					<button type='submit' class='btn btn-default' name='manageDates'>
-						<span class='glyphicon glyphicon-edit'></span>
-					</button>
-				</th>
-				";			
-			}
 			foreach($options as $option)
-				echo "<th style='text-align:center'>$option</th>";
+				echo "<th style='text-align:center'>".$option->getDate()."</th>";
 			echo "</thead>";
 
 			/* add the users to the table */
@@ -125,19 +126,7 @@ class EventForm {
 			echo "<tbody>";
 			foreach($usernames as $username) {
 				if($username != $this->user->getName()) { // do not show yourself in the table
-					echo "<tr>";							
-					if($this->role == Event::ORGANIZER) {
-							echo 
-							"
-							<td>
-								<button type='submit' class='btn btn-default'	name='deleteUser' value='".$this->user->getName()."'>
-									<span class='glyphicon glyphicon-trash'></span>
-								</button>
-							</td>
-							";
-						}				
-	
-					echo "<td>$username</td>";
+					echo "<tr><td>$username</td>";
 					
 					for($i = 0;$i < count($options);$i++) {// just dummy-fill the table at the moment
 						if(rand(0, 1)) {		
@@ -153,18 +142,37 @@ class EventForm {
 					echo "<tr>";
 				}
 			}
-			if($this->role == Event::ORGANIZER) {
-				echo 
-				"
-				<td></td>
-				<td style='text-align:center; vertical-align:middle'>
-					<button type='submit' class='btn btn-default'	name='deleteEvent'>
-						<span class='glyphicon glyphicon-plus'></span>
-					</button>
-				</td>
-				";
-				for($i = 0;$i < count($options) + 1;$i++)
+			if($this->role == Event::PARTICIPANT) {
+				if($this->event instanceof StandardEvent) {
 					echo "<td></td>";
+					for($i = 0;$i < count($options);$i++) {
+						echo
+						"
+						<td align = center>
+							<ul class='dropdown-menu' name='choice".$options[$i]->getId()."'>
+								<li></li>
+								<li>
+									<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>
+								</li>
+								<li>
+									<span class='glyphicon glyphicon-remove' style='color: d2322d;'></span>
+								</li>
+							</ul>
+						</td>
+						";
+					}
+				}
+				if($this->event instanceof OneOneEvent) {
+					echo "<td></td>";
+					for($i = 0;$i < count($options);$i++) {
+						echo
+						"
+						<td align = center>
+							<input type='radio' name='selectedOption' value='".$options[$i]->getDate()."'>
+						</td>
+						";
+					}
+				}
 			}
 			echo "</tbody>";
 
@@ -174,7 +182,26 @@ class EventForm {
 			</table>
 			";
 	}
+
+	/**
+	 * Displays the 'Back'-button at the end of the page.
+	 */
+	private function displayBackButton() {
+		echo
+		"
+		<br><br>
+		<div class='form-group'>
+			<button class='btn btn-primary btn-block btn-lg' type='submit' name='back'>
+				Back
+			</button>
+		</div>
+		";
+	}
 	
+	/**
+	 * Opens all HTML-tags.
+	 * @param $title the title of the page
+	 */
 	private function openHtml($title) {
 		echo 
 		"
@@ -187,6 +214,9 @@ class EventForm {
 				<form action='$this->submit' method='post'>
 		";
 	}
+	/**
+	 * Closes all HTML-tags.
+	 */
 	private function closeHtml() {
 		echo 
 		"
@@ -197,11 +227,15 @@ class EventForm {
 		";
 	}
 
+	/**
+	 * Includes all necessary bootstrap-stylesheets.
+	 */
 	private function loadBootstrap() {
 		echo 
 		"
 		<link href='../bootstrap/css/bootstrap.min.css' rel='stylesheet'>
-		<link href='../../style/bs_callouts.css' rel='stylesheet'>";
+		<link href='../../style/bs_callouts.css' rel='stylesheet'>
+		";
 	}	
 }
 ?>

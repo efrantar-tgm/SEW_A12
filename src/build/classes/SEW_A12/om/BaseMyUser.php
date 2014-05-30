@@ -36,6 +36,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
     protected $name;
 
     /**
+     * @var        PropelObjectCollection|DateOption[] Collection to store aggregation of DateOption objects.
+     */
+    protected $collDateOptions;
+    protected $collDateOptionsPartial;
+
+    /**
      * @var        PropelObjectCollection|Invitation[] Collection to store aggregation of Invitation objects.
      */
     protected $collInvitations;
@@ -71,6 +77,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $eventsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $dateOptionsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -213,6 +225,8 @@ abstract class BaseMyUser extends BaseObject implements Persistent
         $this->hydrate($row, 0, true); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collDateOptions = null;
 
             $this->collInvitations = null;
 
@@ -367,6 +381,23 @@ abstract class BaseMyUser extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->dateOptionsScheduledForDeletion !== null) {
+                if (!$this->dateOptionsScheduledForDeletion->isEmpty()) {
+                    DateOptionQuery::create()
+                        ->filterByPrimaryKeys($this->dateOptionsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->dateOptionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDateOptions !== null) {
+                foreach ($this->collDateOptions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->invitationsScheduledForDeletion !== null) {
                 if (!$this->invitationsScheduledForDeletion->isEmpty()) {
                     InvitationQuery::create()
@@ -515,6 +546,14 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             }
 
 
+                if ($this->collDateOptions !== null) {
+                    foreach ($this->collDateOptions as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
                 if ($this->collInvitations !== null) {
                     foreach ($this->collInvitations as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -598,6 +637,9 @@ abstract class BaseMyUser extends BaseObject implements Persistent
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collDateOptions) {
+                $result['DateOptions'] = $this->collDateOptions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collInvitations) {
                 $result['Invitations'] = $this->collInvitations->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -746,6 +788,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getDateOptions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDateOption($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getInvitations() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addInvitation($relObj->copy($deepCopy));
@@ -813,9 +861,262 @@ abstract class BaseMyUser extends BaseObject implements Persistent
      */
     public function initRelation($relationName)
     {
+        if ('DateOption' == $relationName) {
+            $this->initDateOptions();
+        }
         if ('Invitation' == $relationName) {
             $this->initInvitations();
         }
+    }
+
+    /**
+     * Clears out the collDateOptions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return MyUser The current object (for fluent API support)
+     * @see        addDateOptions()
+     */
+    public function clearDateOptions()
+    {
+        $this->collDateOptions = null; // important to set this to null since that means it is uninitialized
+        $this->collDateOptionsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collDateOptions collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialDateOptions($v = true)
+    {
+        $this->collDateOptionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDateOptions collection.
+     *
+     * By default this just sets the collDateOptions collection to an empty array (like clearcollDateOptions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDateOptions($overrideExisting = true)
+    {
+        if (null !== $this->collDateOptions && !$overrideExisting) {
+            return;
+        }
+        $this->collDateOptions = new PropelObjectCollection();
+        $this->collDateOptions->setModel('DateOption');
+    }
+
+    /**
+     * Gets an array of DateOption objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this MyUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|DateOption[] List of DateOption objects
+     * @throws PropelException
+     */
+    public function getDateOptions($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collDateOptionsPartial && !$this->isNew();
+        if (null === $this->collDateOptions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDateOptions) {
+                // return empty collection
+                $this->initDateOptions();
+            } else {
+                $collDateOptions = DateOptionQuery::create(null, $criteria)
+                    ->filterByMyUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collDateOptionsPartial && count($collDateOptions)) {
+                      $this->initDateOptions(false);
+
+                      foreach ($collDateOptions as $obj) {
+                        if (false == $this->collDateOptions->contains($obj)) {
+                          $this->collDateOptions->append($obj);
+                        }
+                      }
+
+                      $this->collDateOptionsPartial = true;
+                    }
+
+                    $collDateOptions->getInternalIterator()->rewind();
+
+                    return $collDateOptions;
+                }
+
+                if ($partial && $this->collDateOptions) {
+                    foreach ($this->collDateOptions as $obj) {
+                        if ($obj->isNew()) {
+                            $collDateOptions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDateOptions = $collDateOptions;
+                $this->collDateOptionsPartial = false;
+            }
+        }
+
+        return $this->collDateOptions;
+    }
+
+    /**
+     * Sets a collection of DateOption objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $dateOptions A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function setDateOptions(PropelCollection $dateOptions, PropelPDO $con = null)
+    {
+        $dateOptionsToDelete = $this->getDateOptions(new Criteria(), $con)->diff($dateOptions);
+
+
+        $this->dateOptionsScheduledForDeletion = $dateOptionsToDelete;
+
+        foreach ($dateOptionsToDelete as $dateOptionRemoved) {
+            $dateOptionRemoved->setMyUser(null);
+        }
+
+        $this->collDateOptions = null;
+        foreach ($dateOptions as $dateOption) {
+            $this->addDateOption($dateOption);
+        }
+
+        $this->collDateOptions = $dateOptions;
+        $this->collDateOptionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DateOption objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related DateOption objects.
+     * @throws PropelException
+     */
+    public function countDateOptions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collDateOptionsPartial && !$this->isNew();
+        if (null === $this->collDateOptions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDateOptions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDateOptions());
+            }
+            $query = DateOptionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMyUser($this)
+                ->count($con);
+        }
+
+        return count($this->collDateOptions);
+    }
+
+    /**
+     * Method called to associate a BaseDateOption object to this object
+     * through the BaseDateOption foreign key attribute.
+     *
+     * @param    BaseDateOption $l BaseDateOption
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function addDateOption(BaseDateOption $l)
+    {
+        if ($this->collDateOptions === null) {
+            $this->initDateOptions();
+            $this->collDateOptionsPartial = true;
+        }
+
+        if (!in_array($l, $this->collDateOptions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDateOption($l);
+
+            if ($this->dateOptionsScheduledForDeletion and $this->dateOptionsScheduledForDeletion->contains($l)) {
+                $this->dateOptionsScheduledForDeletion->remove($this->dateOptionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	DateOption $dateOption The dateOption object to add.
+     */
+    protected function doAddDateOption($dateOption)
+    {
+        $this->collDateOptions[]= $dateOption;
+        $dateOption->setMyUser($this);
+    }
+
+    /**
+     * @param	DateOption $dateOption The dateOption object to remove.
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function removeDateOption($dateOption)
+    {
+        if ($this->getDateOptions()->contains($dateOption)) {
+            $this->collDateOptions->remove($this->collDateOptions->search($dateOption));
+            if (null === $this->dateOptionsScheduledForDeletion) {
+                $this->dateOptionsScheduledForDeletion = clone $this->collDateOptions;
+                $this->dateOptionsScheduledForDeletion->clear();
+            }
+            $this->dateOptionsScheduledForDeletion[]= $dateOption;
+            $dateOption->setMyUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this MyUser is new, it will return
+     * an empty collection; or if this MyUser has previously
+     * been saved, it will retrieve related DateOptions from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in MyUser.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|DateOption[] List of DateOption objects
+     */
+    public function getDateOptionsJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = DateOptionQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getDateOptions($query, $con);
     }
 
     /**
@@ -1287,6 +1588,11 @@ abstract class BaseMyUser extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collDateOptions) {
+                foreach ($this->collDateOptions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collInvitations) {
                 foreach ($this->collInvitations as $o) {
                     $o->clearAllReferences($deep);
@@ -1301,6 +1607,10 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collDateOptions instanceof PropelCollection) {
+            $this->collDateOptions->clearIterator();
+        }
+        $this->collDateOptions = null;
         if ($this->collInvitations instanceof PropelCollection) {
             $this->collInvitations->clearIterator();
         }
