@@ -143,35 +143,45 @@ class EventForm {
 				}
 			}
 			if($this->role == Event::PARTICIPANT) {
+				echo "<td><b>You</b></td>";
 				if($this->event instanceof StandardEvent) {
-					echo "<td></td>";
 					for($i = 0;$i < count($options);$i++) {
 						echo
 						"
-						<td align = center>
-							<ul class='dropdown-menu' name='choice".$options[$i]->getId()."'>
-								<li></li>
-								<li>
-									<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>
-								</li>
-								<li>
-									<span class='glyphicon glyphicon-remove' style='color: d2322d;'></span>
-								</li>
-							</ul>
+						<td align='center'>
+							<div class='btn-group' data-toggle='buttons'>
+							  <label class='btn btn-default'>
+							    <input type='radio' name='poll$i' value='NONE'>
+							    <span class='glyphicon glyphicon-minus' style='color: transparent;'></span>	
+							  </label>
+							  <label class='btn btn-default'>
+							    <input type='radio'  name='poll$i' value='OK'>
+								<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>	
+							  </label>
+							  <label class='btn btn-default'>
+							    <input type='radio' name='poll$i' value='DECLINE'>
+								<span class='glyphicon glyphicon-remove' style='color: d2322d;'></span>	
+							  </label>
+							</div>
 						</td>
 						";
 					}
 				}
 				if($this->event instanceof OneOneEvent) {
-					echo "<td></td>";
 					for($i = 0;$i < count($options);$i++) {
 						echo
 						"
-						<td align = center>
-							<input type='radio' name='selectedOption' value='".$options[$i]->getDate()."'>
+						<td align='center'>
+							<div class='btn-group' data-toggle='buttons'>
+							  <label class='btn btn-default'>
+							    <input type='radio' name='poll$i' value='OK'>
+								<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>	
+							  </label>
+							</div>
 						</td>
 						";
 					}
+					echo "</div>";
 				}
 			}
 			echo "</tbody>";
@@ -235,6 +245,8 @@ class EventForm {
 		"
 		<link href='../bootstrap/css/bootstrap.min.css' rel='stylesheet'>
 		<link href='../../style/bs_callouts.css' rel='stylesheet'>
+		<script type='text/javascript' src='../forms/jquery_core.js'></script>
+		<script type='text/javascript' src='../bootstrap/js/bootstrap.min.js'></script>
 		";
 	}	
 }

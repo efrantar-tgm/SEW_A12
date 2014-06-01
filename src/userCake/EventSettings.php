@@ -28,6 +28,38 @@ if(!isset($_SESSION["event_id"])) {
 $event = Event::findById($_SESSION["event_id"]);
 $user = MyUser::findByName($loggedInUser->username);
 
+/* functions often used for AJAX-responses */
+
+/**
+ * Returns a list of all date-options of the given event. (id + date)
+ * @param $event the event to return the options from
+ * @return string the json-representation of the date-options-list
+ */
+function getOptions($event) {
+	$options = DateOptionQuery::create()
+	-> filterByEvent($event)
+	-> orderByDate()
+	-> select(array("id", "date"))
+	-> find();
+
+	return json_encode($options);
+}
+/**
+ * Returns a list of all invited users of the given event. (username)
+ * @param $event the event to return the invited users from
+ * @return string the json-representation of the invited-users-list
+ */
+function getUsers($event) {
+	$usernames = InvitationQuery::create()
+	-> filterByEvent($event)
+	-> filterByRole(1) // we want only participants
+	-> orderByUsername()
+	-> select(array('username'))
+	-> find();
+	
+	return json_encode($usernames);
+}
+
 /* if the loaded user is not an organizer, he should not be able to access the settings */
 if($event->getRole($user) != Event::ORGANIZER) {
 	die();
@@ -36,73 +68,67 @@ if($event->getRole($user) != Event::ORGANIZER) {
 /* build the admin-role with all permission required for execution setting-changes */
 $role = new Role(array(Permission::MANAGE_INVITATIONS, Permission::MANAGE_EVENT, Permission::MANAGE_DATES), $user, $event);
 
-/* handle the submit actions */
-
-/* the 'Edit-Name' button was pressed */
-if(isset($_POST['editName'])) {
-	if($_POST['eventName'] != "") { // events cannot have empty names
-		$role->getPermission(Permission::MANAGE_EVENT)->rename($_POST['eventName']);
-	}
-}
-
-/* the 'Add-Option' button was pressed */
-if(isset($_POST['addOption'])) {
-	/* TODO: add checks for validity */
-	/* TODO: return feedback about wrong input to the user */
-	
-	$date = new DateTime($_POST['dateOption']);
-	if($date != false) { // if Date-parsing was successfull
-		if($event instanceof StandardEvent) {
-			$option = new StandardOption();
-			$option->setDate($date);
+/* handle the AJAX requests differntating them by the 'action' parameter */
+switch($_POST["action"]) {
+	case "RENAME": // 'Rename'-request
+		if($_POST["newName"] != "") { // events cannot have empty names
+			$role->getPermission(Permission::MANAGE_EVENT)->rename($_POST["newName"]);
 		}
-		if($event instanceof OneOneEvent) {
-			$option = new OneOneOption();
-			$option->setDate($date);
+		$result = $event->getName();
+		break;
+		
+	case "ADD_OPTION": // 'AddOption'-request
+		$date = new DateTime($_POST["newOption"]);
+		
+		if($date != false) { // if Date-parsing was successfull
+			if($event instanceof StandardEvent) {
+				$option = new StandardOption();
+				$option->setDate($date);
+			}
+			if($event instanceof OneOneEvent) {
+				$option = new OneOneOption();
+				$option->setDate($date);
+			}
+		
+			$role->getPermission(Permission::MANAGE_DATES)->addOption($option);
 		}
-	
-		$role->getPermission(Permission::MANAGE_DATES)->addOption($option);		
-	}
-}
-/* a 'Delete-Option' button was pressed */
-if(isset($_POST['deleteOption'])) {
-	$option = DateOption::findById($_POST['deleteOption']);
-	$role->getPermission(Permission::MANAGE_DATES)->removeOption($option);
-}
-
-/* the 'Add-User' button was pressed */
-if(isset($_POST['addUser'])) {
-	/* TODO: return feedback to the user if the specified user was not found */
-	
-	$userToInvite = MyUser::findByName($_POST['username']);
-	
-	if(!is_null($userToInvite)) { // do only if the input user exists	
-		$role->getPermission(Permission::MANAGE_INVITATIONS)->invite($userToInvite, Event::PARTICIPANT);
-	}
-}
-/* a 'Delete-User' button was pressed */
-if(isset($_POST['deleteUser'])) {
-	$userToDisinvite = MyUser::findByName($_POST['deleteUser']);
-	$role->getPermission(Permission::MANAGE_INVITATIONS)->disinvite($userToDisinvite);
-}
-
-/* the 'Delete-Event' button was pressed */
-if(isset($_POST['deleteEvent'])) {
-	/* TODO: maybe show confirm dialog before performing the delete */
-	
-	$role->getPermission(Permission::MANAGE_EVENT)->deleteEvent();
-	header("Location: EventList.php"); // return to the list since this event does not exist anymore
-}
-
-/* the 'Back' button was pressed */
-if(isset($_POST['back'])) {
-	/* return to the Event-GUI */
-	$form = new EventForm($event, $user, '../userCake/Event.php');
-	$form->show();
-	die();
+		
+		$result = getOptions($event);
+		break;		
+	case "REMOVE_OPTION": // 'RemoveOption'-request
+		$option = DateOption::findById($_POST["option"]);
+		$role->getPermission(Permission::MANAGE_DATES)->removeOption($option);
+		
+		$result = getOptions($event);
+		break;
+		
+	case "ADD_USER": // 'AddUser'-request
+		$userToInvite = MyUser::findByName($_POST['newUser']);
+		
+		if(!is_null($userToInvite)) { // do only if the input user exists
+			$role->getPermission(Permission::MANAGE_INVITATIONS)->invite($userToInvite, Event::PARTICIPANT);
+		}
+		
+		$result = getUsers($event);
+		break;
+	case "REMOVE_USER": // 'RemoveUser'-request
+		$userToDisinvite = MyUser::findByName($_POST['username']);
+		$role->getPermission(Permission::MANAGE_INVITATIONS)->disinvite($userToDisinvite);
+		
+		$result = getUsers($event);
+		break;
+		
+	case "DELETE_EVENT": // 'DeleteEvent'-requesst
+		$role->getPermission(Permission::MANAGE_EVENT)->deleteEvent();
+		break;
+		
+	case "GET_OPTIONS": // 'GetOptions'-request
+		$result = getOptions($event);
+		break;
+	case "GET_USERS": // ''GetUsers'-request
+		$result = getUsers($event);
+		break;
 }
 
-/* display the event-settings GUI */
-$form = new EventSettingsForm($event, $user, '../userCake/EventSettings.php');
-$form->show();
+echo $result; // return the AJAX-request-result
 ?>

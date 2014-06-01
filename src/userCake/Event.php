@@ -50,6 +50,6 @@ if(isset($_POST['back'])) {
 }
 
 /* load the Event-GUI */
-$form = new EventForm($event, $user, '../userCake/Event.php');
+$form = new EventForm($event, $user);
 $form->show();
 ?>
