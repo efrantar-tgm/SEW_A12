@@ -24,7 +24,6 @@ require_once("../access_control/Role.php");
 /* this page should only be accessed by logged in users */
 if (!securePage($_SERVER['PHP_SELF'])){ die(); }
 
-/* if the event id is set, we must add it to $_SESSION to access it from event settings */
 if(isset($_GET["id"])) {
 	$_SESSION["event_id"] = $_GET["id"];
 }
@@ -33,23 +32,56 @@ if(isset($_GET["id"])) {
 $event = Event::findById($_SESSION["event_id"]);
 $user = MyUser::findByName($loggedInUser->username);
 
-/* manage permission */
+/* manage permissions */
 $roletype = $event->getRole($user);
+switch($roletype) {
+	case Event::PARTICIPANT:
+		$role = new Role(array(Permission::POLL), $user, $event);
+		break;
+}
 
-/* the 'Edit'-button was pressed */
-if(isset($_POST['editEvent'])) {
-	/* load the Settings-GUI */
-	$form = new EventSettingsForm($event, $user, '../userCake/EventSettings.php');
-	$form->show();
+/* handle the AJAX requests differntating them by the 'action' parameter */
+if(isset($_POST["action"])) {
+	switch($_POST["action"]) {
+		case "FIX_DATE":
+			$option = DateOption::findById($_POST["option"]);
+			$option->setFixed(true);
+			$option->save();
+			
+			if($event instanceof StandardEvent) {
+				$event->setFixed(true);
+				$event->save();
+			}
+			break;
+	}
+}
+
+if(isset($_POST["save"])) {
+	$options = DateOptionQuery::create()
+		-> filterByEvent($event)
+		-> orderByDate()
+		-> find();
+	
+	for($i = 0;$i < count($options);$i++) {
+		switch($_POST["poll".$i]) {
+		case "OK":
+			$state = true;
+			break;
+		case "DECLINE":
+			$state = false;
+			break;
+		}
+
+		if(isset($state)) {
+			$role->getPermission(Permission::POLL)->poll($options[$i], $state);
+		}
+	}
+	
+	header("Location: EventList.php");
 	die();
 }
-/* the 'Back'-button was pressed */
-if(isset($_POST['back'])) {
-	/* return to the Event-list */
-	header("Location: EventList.php");
-}
 
-/* load the Event-GUI */
+/* this was neither an AJAX-request or a form submission, so just load the UI */
 $form = new EventForm($event, $user);
 $form->show();
 ?>

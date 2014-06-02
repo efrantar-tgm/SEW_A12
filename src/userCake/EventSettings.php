@@ -65,6 +65,13 @@ if($event->getRole($user) != Event::ORGANIZER) {
 	die();
 }
 
+/* this was no AJAX-request, so just load the UI */
+if(!isset($_POST["action"])) {
+	$form = new EventSettingsForm($event, $user);
+	$form->show();
+	die();
+}
+
 /* build the admin-role with all permission required for execution setting-changes */
 $role = new Role(array(Permission::MANAGE_INVITATIONS, Permission::MANAGE_EVENT, Permission::MANAGE_DATES), $user, $event);
 
@@ -125,7 +132,7 @@ switch($_POST["action"]) {
 	case "GET_OPTIONS": // 'GetOptions'-request
 		$result = getOptions($event);
 		break;
-	case "GET_USERS": // ''GetUsers'-request
+	case "GET_USERS": // 'GetUsers'-request
 		$result = getUsers($event);
 		break;
 }

@@ -14,28 +14,31 @@ class StandardOption extends DateOption {
         parent::__construct();
         $this->setClassKey(DateOptionPeer::CLASSKEY_STANDARD);
 
-				$this->setChoices = array();
+		$this->setChoices(array());
     }
 
-		/*
+	/**
      * @see DateOption
      */
-		public function poll($user, $accept) {
-			$this->getChoices()[$user->getName()] = $accept;
-			return true; // in standard-options poll should always be possible
-		}
+	public function poll($user, $accept) {
+		$choices = $this->getChoices();
+		$choices[$user->getName()] = $accept;
+		$this->setChoices($choices);
+		
+		return true; // in standard-options poll should always be possible
+	}
 
-		/**
-		 * @see DateOption
-		 */
-		public function pollFinished($event) {
-			$events = InvitationQuery::create() -> findByEventId($event->getId());
+	/**
+	 * @see DateOption
+	 */
+	public function pollFinished($event) {
+		$events = InvitationQuery::create() -> findByEventId($event->getId());
 			
-			$finished = count($this->choices) == count($event); // check if there is an entry for every invitation
-			foreach($this->choices as $choice)
-				$finished &= !is_null($choiche); // check if no entry is null (it should only be true/false)
+		$finished = count($this->choices) == count($event); // check if there is an entry for every invitation
+		foreach($this->choices as $choice)
+			$finished &= !is_null($choiche); // check if no entry is null (it should only be true/false)
 
-			return $finished;
-		}
+		return $finished;
+	}
 }
 ?>

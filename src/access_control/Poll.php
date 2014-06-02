@@ -25,7 +25,10 @@ class Poll extends Permission {
 	 * @return boolean true if polling was successfull; false otherwise
 	 */
 	public function poll($option, $accept) {
-		return $option->poll($this->user, $accept);
+		$ret = $option->poll($this->user, $accept);
+		$option->save();
+		
+		return $ret;
 	}
 }
 ?>

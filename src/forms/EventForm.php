@@ -22,12 +22,10 @@ class EventForm {
      * @param MyUser the user visiting this page
      * @param String the full path to the php-file to call on submit
      */
-	public function __construct($event, $user, $submit) {
+	public function __construct($event, $user) {
 		$this->event = $event;
 		$this->user = $user;
 		$this->role = $this->event->getRole($this->user);
-
-		$this->submit = $submit;
 	}
 	
 	/**
@@ -52,11 +50,14 @@ class EventForm {
 
 		$this->displayTable();
 
-		if($this->role == Event::ORGANIZER) {
-			$this->displayAdminOptions();
+		switch($this->role) {
+			case Event::ORGANIZER:
+				$this->displayAdminOptions();
+				break;
+			case Event::PARTICIPANT:
+				$this->displayParticipantOptions();
+				break;
 		}
-
-		$this->displayBackButton();
 
 		$this->closeHtml();
 	}
@@ -80,16 +81,31 @@ class EventForm {
 	 * Displays the admin-options ('FixDate' and 'Settings')
 	 */
 	private function displayAdminOptions() {
+		$disabled = "";
+		if($this->event->getFixed()) {
+			$disabled = "disabled";
+		}
 		echo 
 		"
 		<div>
-			<button type='submit' class='btn btn-primary' name='foxDate'>
-				Fix Date
-				<span class='glyphicon glyphicon-lock'></span>
-			</button>
-			<button type='submit' class='btn btn-default' name='editEvent'>
+			<button type='button' class='btn btn-default' onClick='goToSettings()' $disabled>
 				Settings
 				<span class='glyphicon glyphicon-cog'></span>
+			</button>
+		</div>
+		";
+	}
+	private function displayParticipantOptions() {
+		$disabled = "";
+		if($this->event->getFixed()) {
+			$disabled = "disabled";
+		}
+		echo
+		"
+		<div>
+			<button type='submit' class='btn btn-default' name='save' $disabled>
+				Save
+				<span class='glyphicon glyphicon-save'></span>
 			</button>
 		</div>
 		";
@@ -102,7 +118,7 @@ class EventForm {
 			echo 
 			"
 			<p>
-				<table class='table'>
+				<table class='table' id='table'>
 			";
 
 			/* build date-option headers */
@@ -111,9 +127,39 @@ class EventForm {
 				-> orderByDate()
 				-> find();
 			
+			echo "<colgroup>";
+			for($i = 0;$i < count($options) + 1;$i++) {
+				if($i != 0 && $options[$i - 1]->getFixed()) {
+     				echo "<col style='background: f9f9f9;' />";
+				}
+				else {
+					echo "<col />";
+				}
+			}
+   			echo "</colgroup>";
+   					
 			echo "<thead><th></th>";
-			foreach($options as $option)
-				echo "<th style='text-align:center'>".$option->getDate()."</th>";
+			foreach($options as $option) {
+				echo "<th style='text-align:center'>";
+				
+				if($this->role == Event::ORGANIZER) {
+					$disabled = "";
+					if($this->event->getFixed()) {
+						$disabled = "disabled";
+					}
+
+					echo
+					"
+					<button type='button' class='btn btn-default' $disabled onClick='fixDate(".$option->getId().")'>"
+						.$option->getDate().
+					"</button>
+					";
+				}
+				else {
+					echo $option->getDate();
+				}
+				echo "</th>";
+			}
 			echo "</thead>";
 
 			/* add the users to the table */
@@ -125,45 +171,66 @@ class EventForm {
 
 			echo "<tbody>";
 			foreach($usernames as $username) {
-				if($username != $this->user->getName()) { // do not show yourself in the table
+				if($username != $this->user->getName() || ($this->event->getFixed() && $this->role == Event::PARTICIPANT)) { // do not show yourself in the table
 					echo "<tr><td>$username</td>";
 					
-					for($i = 0;$i < count($options);$i++) {// just dummy-fill the table at the moment
-						if(rand(0, 1)) {		
-							$glyphicon = 'glyphicon-ok';
-							$color = '47a446';				
+					foreach($options as $option) {
+						if($option instanceof StandardOption) {
+							$choices = $option->getChoices();
+							
+							if(!is_null($choices) && key_exists($username, $choices)) {
+								if($choices[$username]) {
+									$glyphicon = 'glyphicon-ok';
+									$color = '47a446';
+								}
+								else {
+									$glyphicon = 'glyphicon-remove';
+									$color = 'd2322d';
+								}
+								echo "<td align='center'><span class='glyphicon $glyphicon' style='color: $color;'></span></td>";
+							}
+							else {
+								echo "<td></td>";
+									
+							}
 						}
-						else {
-							$glyphicon = 'glyphicon-remove';
-							$color = 'd2322d';		
-						}
-						echo "<td align='center'><span class='glyphicon $glyphicon' style='color: $color;'></span></td>";
 					}
 					echo "<tr>";
 				}
 			}
-			if($this->role == Event::PARTICIPANT) {
+			if($this->role == Event::PARTICIPANT && !$this->event->getFixed()) {
 				echo "<td><b>You</b></td>";
 				if($this->event instanceof StandardEvent) {
 					for($i = 0;$i < count($options);$i++) {
+						
+						$choices = $options[$i]->getChoices();
+						if(!is_null($choices) && key_exists($this->user->getName(), $choices)) {
+							if($choices[$this->user->getName()]) {
+								$pressed_button = "pollOk";
+							}
+							else {
+								$pressed_button = "pollDecline";
+							}
+						}
+						else { $pressed_button = "pollNone"; }
+						
 						echo
 						"
 						<td align='center'>
 							<div class='btn-group' data-toggle='buttons'>
-							  <label class='btn btn-default'>
-							    <input type='radio' name='poll$i' value='NONE'>
-							    <span class='glyphicon glyphicon-minus' style='color: transparent;'></span>	
-							  </label>
-							  <label class='btn btn-default'>
-							    <input type='radio'  name='poll$i' value='OK'>
-								<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>	
-							  </label>
-							  <label class='btn btn-default'>
-							    <input type='radio' name='poll$i' value='DECLINE'>
-								<span class='glyphicon glyphicon-remove' style='color: d2322d;'></span>	
-							  </label>
+							    <label class='btn btn-default' id='pollOk$i'>
+							    	<input type='radio' name='poll$i' value='OK'>
+									<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>	
+								</label>
+								<label class='btn btn-default' id='pollDecline$i'>
+							    	<input type='radio' name='poll$i' value='DECLINE'>
+									<span class='glyphicon glyphicon-remove' style='color: d2322d;'></span>	
+								</label>
 							</div>
 						</td>
+						<script type='text/javascript'>
+							$('#$pressed_button".$i."').addClass('active');
+						</script>
 						";
 					}
 				}
@@ -192,21 +259,6 @@ class EventForm {
 			</table>
 			";
 	}
-
-	/**
-	 * Displays the 'Back'-button at the end of the page.
-	 */
-	private function displayBackButton() {
-		echo
-		"
-		<br><br>
-		<div class='form-group'>
-			<button class='btn btn-primary btn-block btn-lg' type='submit' name='back'>
-				Back
-			</button>
-		</div>
-		";
-	}
 	
 	/**
 	 * Opens all HTML-tags.
@@ -221,7 +273,7 @@ class EventForm {
 		</head>
 		<body>
 			<div class='container'>
-				<form action='$this->submit' method='post'>
+				<form action='../userCake/Event.php' method='POST'>
 		";
 	}
 	/**
@@ -247,6 +299,7 @@ class EventForm {
 		<link href='../../style/bs_callouts.css' rel='stylesheet'>
 		<script type='text/javascript' src='../forms/jquery_core.js'></script>
 		<script type='text/javascript' src='../bootstrap/js/bootstrap.min.js'></script>
+		<script type='text/javascript' src='../forms/Event.js'></script>
 		";
 	}	
 }

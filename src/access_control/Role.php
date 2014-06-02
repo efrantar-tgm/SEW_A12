@@ -3,6 +3,7 @@ require_once("Permission.php");
 require_once("ManageInvitations.php");
 require_once("ManageDates.php");
 require_once("ManageEvent.php");
+require_once("Poll.php");
 require_once("../PropelInit.php");
 
 /**
@@ -32,7 +33,10 @@ class Role {
 					break;
 				case Permission::MANAGE_EVENT:
 					$permission = new ManageEvent($event, $user);
-					break; 			
+					break; 	
+				case Permission::POLL:
+					$permission = new Poll($event, $user);
+					break;		
 			}
 			$this->permissions[$permissiontype] = $permission;		
 		}
