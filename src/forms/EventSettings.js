@@ -77,7 +77,6 @@ function handleRemoveOptionEvent(optionId) {
 	    data: { "action": "REMOVE_OPTION",
 	    		"option": optionId},
 	    success: function(result) {
-	    	alert(result);
 	    	loadOptionsList(result);
 	    }
 	});
