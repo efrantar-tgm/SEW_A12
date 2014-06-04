@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'dateOptions' table.
+ * This class defines the structure of the 'notifications' table.
  *
  *
  *
@@ -14,13 +14,13 @@
  *
  * @package    propel.generator.SEW_A12.map
  */
-class DateOptionTableMap extends TableMap
+class NotificationTableMap extends TableMap
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'SEW_A12.map.DateOptionTableMap';
+    const CLASS_NAME = 'SEW_A12.map.NotificationTableMap';
 
     /**
      * Initialize the table attributes, columns and validators
@@ -32,20 +32,19 @@ class DateOptionTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('dateOptions');
-        $this->setPhpName('DateOption');
-        $this->setClassname('DateOption');
+        $this->setName('notifications');
+        $this->setPhpName('Notification');
+        $this->setClassname('Notification');
         $this->setPackage('SEW_A12');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         $this->setSingleTableInheritance(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('date', 'Date', 'TIMESTAMP', true, null, null);
-        $this->addColumn('fixed', 'Fixed', 'BOOLEAN', false, 1, false);
-        $this->addForeignKey('eventId', 'Eventid', 'INTEGER', 'events', 'id', true, null, null);
+        $this->addColumn('status', 'Status', 'INTEGER', false, null, null);
+        $this->addForeignKey('option', 'Option', 'INTEGER', 'dateOptions', 'id', false, null, null);
+        $this->addForeignKey('event_id', 'EventId', 'INTEGER', 'events', 'id', true, null, null);
+        $this->addForeignPrimaryKey('username', 'Username', 'VARCHAR' , 'users', 'name', true, 255, null);
         $this->addColumn('class_key', 'ClassKey', 'VARCHAR', false, 255, null);
-        $this->addColumn('choices', 'Choices', 'OBJECT', false, null, null);
-        $this->addForeignKey('userName', 'Username', 'VARCHAR', 'users', 'name', false, 255, null);
         // validators
     } // initialize()
 
@@ -54,9 +53,9 @@ class DateOptionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Event', 'Event', RelationMap::MANY_TO_ONE, array('eventId' => 'id', ), 'CASCADE', null);
-        $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_ONE, array('userName' => 'name', ), 'CASCADE', null);
-        $this->addRelation('Notification', 'Notification', RelationMap::ONE_TO_MANY, array('id' => 'option', ), 'CASCADE', null, 'Notifications');
+        $this->addRelation('DateOption', 'DateOption', RelationMap::MANY_TO_ONE, array('option' => 'id', ), 'CASCADE', null);
+        $this->addRelation('Event', 'Event', RelationMap::MANY_TO_ONE, array('event_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_ONE, array('username' => 'name', ), 'CASCADE', null);
     } // buildRelations()
 
-} // DateOptionTableMap
+} // NotificationTableMap

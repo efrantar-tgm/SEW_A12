@@ -90,6 +90,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     protected $aMyUser;
 
     /**
+     * @var        PropelObjectCollection|Notification[] Collection to store aggregation of Notification objects.
+     */
+    protected $collNotifications;
+    protected $collNotificationsPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -108,6 +114,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInClearAllReferencesDeep = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $notificationsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -523,6 +535,8 @@ abstract class BaseDateOption extends BaseObject implements Persistent
 
             $this->aEvent = null;
             $this->aMyUser = null;
+            $this->collNotifications = null;
+
         } // if (deep)
     }
 
@@ -664,6 +678,23 @@ abstract class BaseDateOption extends BaseObject implements Persistent
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->notificationsScheduledForDeletion !== null) {
+                if (!$this->notificationsScheduledForDeletion->isEmpty()) {
+                    NotificationQuery::create()
+                        ->filterByPrimaryKeys($this->notificationsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->notificationsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collNotifications !== null) {
+                foreach ($this->collNotifications as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -862,6 +893,14 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             }
 
 
+                if ($this->collNotifications !== null) {
+                    foreach ($this->collNotifications as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -966,6 +1005,9 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             }
             if (null !== $this->aMyUser) {
                 $result['MyUser'] = $this->aMyUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collNotifications) {
+                $result['Notifications'] = $this->collNotifications->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1148,6 +1190,12 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             // store object hash to prevent cycle
             $this->startCopy = true;
 
+            foreach ($this->getNotifications() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addNotification($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -1302,6 +1350,297 @@ abstract class BaseDateOption extends BaseObject implements Persistent
         return $this->aMyUser;
     }
 
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Notification' == $relationName) {
+            $this->initNotifications();
+        }
+    }
+
+    /**
+     * Clears out the collNotifications collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return DateOption The current object (for fluent API support)
+     * @see        addNotifications()
+     */
+    public function clearNotifications()
+    {
+        $this->collNotifications = null; // important to set this to null since that means it is uninitialized
+        $this->collNotificationsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collNotifications collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialNotifications($v = true)
+    {
+        $this->collNotificationsPartial = $v;
+    }
+
+    /**
+     * Initializes the collNotifications collection.
+     *
+     * By default this just sets the collNotifications collection to an empty array (like clearcollNotifications());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initNotifications($overrideExisting = true)
+    {
+        if (null !== $this->collNotifications && !$overrideExisting) {
+            return;
+        }
+        $this->collNotifications = new PropelObjectCollection();
+        $this->collNotifications->setModel('Notification');
+    }
+
+    /**
+     * Gets an array of Notification objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this DateOption is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Notification[] List of Notification objects
+     * @throws PropelException
+     */
+    public function getNotifications($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collNotificationsPartial && !$this->isNew();
+        if (null === $this->collNotifications || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collNotifications) {
+                // return empty collection
+                $this->initNotifications();
+            } else {
+                $collNotifications = NotificationQuery::create(null, $criteria)
+                    ->filterByDateOption($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collNotificationsPartial && count($collNotifications)) {
+                      $this->initNotifications(false);
+
+                      foreach ($collNotifications as $obj) {
+                        if (false == $this->collNotifications->contains($obj)) {
+                          $this->collNotifications->append($obj);
+                        }
+                      }
+
+                      $this->collNotificationsPartial = true;
+                    }
+
+                    $collNotifications->getInternalIterator()->rewind();
+
+                    return $collNotifications;
+                }
+
+                if ($partial && $this->collNotifications) {
+                    foreach ($this->collNotifications as $obj) {
+                        if ($obj->isNew()) {
+                            $collNotifications[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collNotifications = $collNotifications;
+                $this->collNotificationsPartial = false;
+            }
+        }
+
+        return $this->collNotifications;
+    }
+
+    /**
+     * Sets a collection of Notification objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $notifications A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function setNotifications(PropelCollection $notifications, PropelPDO $con = null)
+    {
+        $notificationsToDelete = $this->getNotifications(new Criteria(), $con)->diff($notifications);
+
+
+        $this->notificationsScheduledForDeletion = $notificationsToDelete;
+
+        foreach ($notificationsToDelete as $notificationRemoved) {
+            $notificationRemoved->setDateOption(null);
+        }
+
+        $this->collNotifications = null;
+        foreach ($notifications as $notification) {
+            $this->addNotification($notification);
+        }
+
+        $this->collNotifications = $notifications;
+        $this->collNotificationsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Notification objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Notification objects.
+     * @throws PropelException
+     */
+    public function countNotifications(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collNotificationsPartial && !$this->isNew();
+        if (null === $this->collNotifications || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collNotifications) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getNotifications());
+            }
+            $query = NotificationQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByDateOption($this)
+                ->count($con);
+        }
+
+        return count($this->collNotifications);
+    }
+
+    /**
+     * Method called to associate a BaseNotification object to this object
+     * through the BaseNotification foreign key attribute.
+     *
+     * @param    BaseNotification $l BaseNotification
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function addNotification(BaseNotification $l)
+    {
+        if ($this->collNotifications === null) {
+            $this->initNotifications();
+            $this->collNotificationsPartial = true;
+        }
+
+        if (!in_array($l, $this->collNotifications->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddNotification($l);
+
+            if ($this->notificationsScheduledForDeletion and $this->notificationsScheduledForDeletion->contains($l)) {
+                $this->notificationsScheduledForDeletion->remove($this->notificationsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Notification $notification The notification object to add.
+     */
+    protected function doAddNotification($notification)
+    {
+        $this->collNotifications[]= $notification;
+        $notification->setDateOption($this);
+    }
+
+    /**
+     * @param	Notification $notification The notification object to remove.
+     * @return DateOption The current object (for fluent API support)
+     */
+    public function removeNotification($notification)
+    {
+        if ($this->getNotifications()->contains($notification)) {
+            $this->collNotifications->remove($this->collNotifications->search($notification));
+            if (null === $this->notificationsScheduledForDeletion) {
+                $this->notificationsScheduledForDeletion = clone $this->collNotifications;
+                $this->notificationsScheduledForDeletion->clear();
+            }
+            $this->notificationsScheduledForDeletion[]= $notification;
+            $notification->setDateOption(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this DateOption is new, it will return
+     * an empty collection; or if this DateOption has previously
+     * been saved, it will retrieve related Notifications from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in DateOption.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Notification[] List of Notification objects
+     */
+    public function getNotificationsJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = NotificationQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getNotifications($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this DateOption is new, it will return
+     * an empty collection; or if this DateOption has previously
+     * been saved, it will retrieve related Notifications from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in DateOption.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Notification[] List of Notification objects
+     */
+    public function getNotificationsJoinMyUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = NotificationQuery::create(null, $criteria);
+        $query->joinWith('MyUser', $join_behavior);
+
+        return $this->getNotifications($query, $con);
+    }
+
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -1338,6 +1677,11 @@ abstract class BaseDateOption extends BaseObject implements Persistent
     {
         if ($deep && !$this->alreadyInClearAllReferencesDeep) {
             $this->alreadyInClearAllReferencesDeep = true;
+            if ($this->collNotifications) {
+                foreach ($this->collNotifications as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->aEvent instanceof Persistent) {
               $this->aEvent->clearAllReferences($deep);
             }
@@ -1348,6 +1692,10 @@ abstract class BaseDateOption extends BaseObject implements Persistent
             $this->alreadyInClearAllReferencesDeep = false;
         } // if ($deep)
 
+        if ($this->collNotifications instanceof PropelCollection) {
+            $this->collNotifications->clearIterator();
+        }
+        $this->collNotifications = null;
         $this->aEvent = null;
         $this->aMyUser = null;
     }

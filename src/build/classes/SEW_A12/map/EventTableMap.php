@@ -53,6 +53,7 @@ class EventTableMap extends TableMap
     {
         $this->addRelation('DateOption', 'DateOption', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), 'CASCADE', null, 'DateOptions');
         $this->addRelation('Invitation', 'Invitation', RelationMap::ONE_TO_MANY, array('id' => 'eventId', ), 'CASCADE', null, 'Invitations');
+        $this->addRelation('Notification', 'Notification', RelationMap::ONE_TO_MANY, array('id' => 'event_id', ), 'CASCADE', null, 'Notifications');
         $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'eventid', ), 'CASCADE', null, 'Comments');
         $this->addRelation('MyUser', 'MyUser', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'MyUsers');
     } // buildRelations()

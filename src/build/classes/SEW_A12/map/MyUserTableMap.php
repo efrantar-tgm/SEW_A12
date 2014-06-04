@@ -49,6 +49,7 @@ class MyUserTableMap extends TableMap
     {
         $this->addRelation('DateOption', 'DateOption', RelationMap::ONE_TO_MANY, array('name' => 'userName', ), 'CASCADE', null, 'DateOptions');
         $this->addRelation('Invitation', 'Invitation', RelationMap::ONE_TO_MANY, array('name' => 'userName', ), 'CASCADE', null, 'Invitations');
+        $this->addRelation('Notification', 'Notification', RelationMap::ONE_TO_MANY, array('name' => 'username', ), 'CASCADE', null, 'Notifications');
         $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('name' => 'username', ), 'CASCADE', null, 'Comments');
         $this->addRelation('Event', 'Event', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Events');
     } // buildRelations()

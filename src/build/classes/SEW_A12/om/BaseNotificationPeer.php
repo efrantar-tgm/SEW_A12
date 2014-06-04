@@ -2,83 +2,89 @@
 
 
 /**
- * Base static class for performing query and update operations on the 'dateOptions' table.
+ * Base static class for performing query and update operations on the 'notifications' table.
  *
  *
  *
  * @package propel.generator.SEW_A12.om
  */
-abstract class BaseDateOptionPeer
+abstract class BaseNotificationPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'SEW_A12';
 
     /** the table name for this class */
-    const TABLE_NAME = 'dateOptions';
+    const TABLE_NAME = 'notifications';
 
     /** the related Propel class for this table */
-    const OM_CLASS = '';
+    const OM_CLASS = 'Notification';
 
     /** the related TableMap class for this table */
-    const TM_CLASS = 'DateOptionTableMap';
+    const TM_CLASS = 'NotificationTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 6;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /** the column name for the id field */
-    const ID = 'dateOptions.id';
+    const ID = 'notifications.id';
 
-    /** the column name for the date field */
-    const DATE = 'dateOptions.date';
+    /** the column name for the status field */
+    const STATUS = 'notifications.status';
 
-    /** the column name for the fixed field */
-    const FIXED = 'dateOptions.fixed';
+    /** the column name for the option field */
+    const OPTION = 'notifications.option';
 
-    /** the column name for the eventId field */
-    const EVENTID = 'dateOptions.eventId';
+    /** the column name for the event_id field */
+    const EVENT_ID = 'notifications.event_id';
+
+    /** the column name for the username field */
+    const USERNAME = 'notifications.username';
 
     /** the column name for the class_key field */
-    const CLASS_KEY = 'dateOptions.class_key';
-
-    /** the column name for the choices field */
-    const CHOICES = 'dateOptions.choices';
-
-    /** the column name for the userName field */
-    const USERNAME = 'dateOptions.userName';
+    const CLASS_KEY = 'notifications.class_key';
 
     /** A key representing a particular subclass */
-    const CLASSKEY_STANDARD = 'STANDARD';
+    const CLASSKEY_OPTION_FIXED = 'OPTION_FIXED';
 
     /** A key representing a particular subclass */
-    const CLASSKEY_STANDARDOPTION = 'STANDARD';
+    const CLASSKEY_OPTIONFIXED = 'OPTION_FIXED';
 
     /** A class that can be returned by this peer. */
-    const CLASSNAME_STANDARD = 'StandardOption';
+    const CLASSNAME_OPTION_FIXED = 'OptionFixed';
 
     /** A key representing a particular subclass */
-    const CLASSKEY_ONEONE = 'ONEONE';
+    const CLASSKEY_POLL_FINISHED = 'POLL_FINISHED';
 
     /** A key representing a particular subclass */
-    const CLASSKEY_ONEONEOPTION = 'ONEONE';
+    const CLASSKEY_POLLFINISHED = 'POLL_FINISHED';
 
     /** A class that can be returned by this peer. */
-    const CLASSNAME_ONEONE = 'OneOneOption';
+    const CLASSNAME_POLL_FINISHED = 'PollFinished';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STATUS_CHANGED = 'STATUS_CHANGED';
+
+    /** A key representing a particular subclass */
+    const CLASSKEY_STATUSCHANGED = 'STATUS_CHANGED';
+
+    /** A class that can be returned by this peer. */
+    const CLASSNAME_STATUS_CHANGED = 'Statuschanged';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     /**
-     * An identity map to hold any loaded instances of DateOption objects.
+     * An identity map to hold any loaded instances of Notification objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array DateOption[]
+     * @var        array Notification[]
      */
     public static $instances = array();
 
@@ -87,30 +93,30 @@ abstract class BaseDateOptionPeer
      * holds an array of fieldnames
      *
      * first dimension keys are the type constants
-     * e.g. DateOptionPeer::$fieldNames[DateOptionPeer::TYPE_PHPNAME][0] = 'Id'
+     * e.g. NotificationPeer::$fieldNames[NotificationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Date', 'Fixed', 'Eventid', 'ClassKey', 'Choices', 'Username', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'date', 'fixed', 'eventid', 'classKey', 'choices', 'username', ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID, DateOptionPeer::DATE, DateOptionPeer::FIXED, DateOptionPeer::EVENTID, DateOptionPeer::CLASS_KEY, DateOptionPeer::CHOICES, DateOptionPeer::USERNAME, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DATE', 'FIXED', 'EVENTID', 'CLASS_KEY', 'CHOICES', 'USERNAME', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'date', 'fixed', 'eventId', 'class_key', 'choices', 'userName', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Status', 'Option', 'EventId', 'Username', 'ClassKey', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'status', 'option', 'eventId', 'username', 'classKey', ),
+        BasePeer::TYPE_COLNAME => array (NotificationPeer::ID, NotificationPeer::STATUS, NotificationPeer::OPTION, NotificationPeer::EVENT_ID, NotificationPeer::USERNAME, NotificationPeer::CLASS_KEY, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'STATUS', 'OPTION', 'EVENT_ID', 'USERNAME', 'CLASS_KEY', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'status', 'option', 'event_id', 'username', 'class_key', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
     );
 
     /**
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. DateOptionPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. NotificationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Date' => 1, 'Fixed' => 2, 'Eventid' => 3, 'ClassKey' => 4, 'Choices' => 5, 'Username' => 6, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventid' => 3, 'classKey' => 4, 'choices' => 5, 'username' => 6, ),
-        BasePeer::TYPE_COLNAME => array (DateOptionPeer::ID => 0, DateOptionPeer::DATE => 1, DateOptionPeer::FIXED => 2, DateOptionPeer::EVENTID => 3, DateOptionPeer::CLASS_KEY => 4, DateOptionPeer::CHOICES => 5, DateOptionPeer::USERNAME => 6, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DATE' => 1, 'FIXED' => 2, 'EVENTID' => 3, 'CLASS_KEY' => 4, 'CHOICES' => 5, 'USERNAME' => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'date' => 1, 'fixed' => 2, 'eventId' => 3, 'class_key' => 4, 'choices' => 5, 'userName' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Status' => 1, 'Option' => 2, 'EventId' => 3, 'Username' => 4, 'ClassKey' => 5, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'status' => 1, 'option' => 2, 'eventId' => 3, 'username' => 4, 'classKey' => 5, ),
+        BasePeer::TYPE_COLNAME => array (NotificationPeer::ID => 0, NotificationPeer::STATUS => 1, NotificationPeer::OPTION => 2, NotificationPeer::EVENT_ID => 3, NotificationPeer::USERNAME => 4, NotificationPeer::CLASS_KEY => 5, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'STATUS' => 1, 'OPTION' => 2, 'EVENT_ID' => 3, 'USERNAME' => 4, 'CLASS_KEY' => 5, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'status' => 1, 'option' => 2, 'event_id' => 3, 'username' => 4, 'class_key' => 5, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -125,10 +131,10 @@ abstract class BaseDateOptionPeer
      */
     public static function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = DateOptionPeer::getFieldNames($toType);
-        $key = isset(DateOptionPeer::$fieldKeys[$fromType][$name]) ? DateOptionPeer::$fieldKeys[$fromType][$name] : null;
+        $toNames = NotificationPeer::getFieldNames($toType);
+        $key = isset(NotificationPeer::$fieldKeys[$fromType][$name]) ? NotificationPeer::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(DateOptionPeer::$fieldKeys[$fromType], true));
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(NotificationPeer::$fieldKeys[$fromType], true));
         }
 
         return $toNames[$key];
@@ -145,11 +151,11 @@ abstract class BaseDateOptionPeer
      */
     public static function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (!array_key_exists($type, DateOptionPeer::$fieldNames)) {
+        if (!array_key_exists($type, NotificationPeer::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
         }
 
-        return DateOptionPeer::$fieldNames[$type];
+        return NotificationPeer::$fieldNames[$type];
     }
 
     /**
@@ -161,12 +167,12 @@ abstract class BaseDateOptionPeer
      *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. DateOptionPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. NotificationPeer::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(DateOptionPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(NotificationPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -184,21 +190,19 @@ abstract class BaseDateOptionPeer
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(DateOptionPeer::ID);
-            $criteria->addSelectColumn(DateOptionPeer::DATE);
-            $criteria->addSelectColumn(DateOptionPeer::FIXED);
-            $criteria->addSelectColumn(DateOptionPeer::EVENTID);
-            $criteria->addSelectColumn(DateOptionPeer::CLASS_KEY);
-            $criteria->addSelectColumn(DateOptionPeer::CHOICES);
-            $criteria->addSelectColumn(DateOptionPeer::USERNAME);
+            $criteria->addSelectColumn(NotificationPeer::ID);
+            $criteria->addSelectColumn(NotificationPeer::STATUS);
+            $criteria->addSelectColumn(NotificationPeer::OPTION);
+            $criteria->addSelectColumn(NotificationPeer::EVENT_ID);
+            $criteria->addSelectColumn(NotificationPeer::USERNAME);
+            $criteria->addSelectColumn(NotificationPeer::CLASS_KEY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.date');
-            $criteria->addSelectColumn($alias . '.fixed');
-            $criteria->addSelectColumn($alias . '.eventId');
+            $criteria->addSelectColumn($alias . '.status');
+            $criteria->addSelectColumn($alias . '.option');
+            $criteria->addSelectColumn($alias . '.event_id');
+            $criteria->addSelectColumn($alias . '.username');
             $criteria->addSelectColumn($alias . '.class_key');
-            $criteria->addSelectColumn($alias . '.choices');
-            $criteria->addSelectColumn($alias . '.userName');
         }
     }
 
@@ -218,21 +222,21 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME); // Set the correct dbName
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME); // Set the correct dbName
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -251,7 +255,7 @@ abstract class BaseDateOptionPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      PropelPDO $con
-     * @return DateOption
+     * @return Notification
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -259,7 +263,7 @@ abstract class BaseDateOptionPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = DateOptionPeer::doSelect($critcopy, $con);
+        $objects = NotificationPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -277,7 +281,7 @@ abstract class BaseDateOptionPeer
      */
     public static function doSelect(Criteria $criteria, PropelPDO $con = null)
     {
-        return DateOptionPeer::populateObjects(DateOptionPeer::doSelectStmt($criteria, $con));
+        return NotificationPeer::populateObjects(NotificationPeer::doSelectStmt($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -295,16 +299,16 @@ abstract class BaseDateOptionPeer
     public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
         if (!$criteria->hasSelectClause()) {
             $criteria = clone $criteria;
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -318,16 +322,16 @@ abstract class BaseDateOptionPeer
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param DateOption $obj A DateOption object.
+     * @param Notification $obj A Notification object.
      * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if ($key === null) {
-                $key = (string) $obj->getId();
+                $key = serialize(array((string) $obj->getId(), (string) $obj->getUsername()));
             } // if key === null
-            DateOptionPeer::$instances[$key] = $obj;
+            NotificationPeer::$instances[$key] = $obj;
         }
     }
 
@@ -339,7 +343,7 @@ abstract class BaseDateOptionPeer
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed $value A DateOption object or a primary key value.
+     * @param      mixed $value A Notification object or a primary key value.
      *
      * @return void
      * @throws PropelException - if the value is invalid.
@@ -347,17 +351,17 @@ abstract class BaseDateOptionPeer
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
-            if (is_object($value) && $value instanceof DateOption) {
-                $key = (string) $value->getId();
-            } elseif (is_scalar($value)) {
+            if (is_object($value) && $value instanceof Notification) {
+                $key = serialize(array((string) $value->getId(), (string) $value->getUsername()));
+            } elseif (is_array($value) && count($value) === 2) {
                 // assume we've been passed a primary key
-                $key = (string) $value;
+                $key = serialize(array((string) $value[0], (string) $value[1]));
             } else {
-                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or DateOption object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Notification object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
                 throw $e;
             }
 
-            unset(DateOptionPeer::$instances[$key]);
+            unset(NotificationPeer::$instances[$key]);
         }
     } // removeInstanceFromPool()
 
@@ -368,14 +372,14 @@ abstract class BaseDateOptionPeer
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return DateOption Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return Notification Found object or null if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (isset(DateOptionPeer::$instances[$key])) {
-                return DateOptionPeer::$instances[$key];
+            if (isset(NotificationPeer::$instances[$key])) {
+                return NotificationPeer::$instances[$key];
             }
         }
 
@@ -390,22 +394,19 @@ abstract class BaseDateOptionPeer
     public static function clearInstancePool($and_clear_all_references = false)
     {
       if ($and_clear_all_references) {
-        foreach (DateOptionPeer::$instances as $instance) {
+        foreach (NotificationPeer::$instances as $instance) {
           $instance->clearAllReferences(true);
         }
       }
-        DateOptionPeer::$instances = array();
+        NotificationPeer::$instances = array();
     }
 
     /**
-     * Method to invalidate the instance pool of all tables related to dateOptions
+     * Method to invalidate the instance pool of all tables related to notifications
      * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
-        // Invalidate objects in NotificationPeer instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        NotificationPeer::clearInstancePool();
     }
 
     /**
@@ -421,11 +422,11 @@ abstract class BaseDateOptionPeer
     public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
     {
         // If the PK cannot be derived from the row, return null.
-        if ($row[$startcol] === null) {
+        if ($row[$startcol] === null && $row[$startcol + 4] === null) {
             return null;
         }
 
-        return (string) $row[$startcol];
+        return serialize(array((string) $row[$startcol], (string) $row[$startcol + 4]));
     }
 
     /**
@@ -440,7 +441,7 @@ abstract class BaseDateOptionPeer
     public static function getPrimaryKeyFromRow($row, $startcol = 0)
     {
 
-        return (int) $row[$startcol];
+        return array((int) $row[$startcol], (string) $row[$startcol + 4]);
     }
 
     /**
@@ -456,20 +457,20 @@ abstract class BaseDateOptionPeer
 
         // populate the object(s)
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj = DateOptionPeer::getInstanceFromPool($key))) {
+            $key = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj = NotificationPeer::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
                 // class must be set each time from the record row
-                $cls = DateOptionPeer::getOMClass($row, 0);
+                $cls = NotificationPeer::getOMClass($row, 0);
                 $cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                DateOptionPeer::addInstanceToPool($obj, $key);
+                NotificationPeer::addInstanceToPool($obj, $key);
             } // if key exists
         }
         $stmt->closeCursor();
@@ -483,29 +484,75 @@ abstract class BaseDateOptionPeer
      * @param      int $startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
-     * @return array (DateOption object, last column rank)
+     * @return array (Notification object, last column rank)
      */
     public static function populateObject($row, $startcol = 0)
     {
-        $key = DateOptionPeer::getPrimaryKeyHashFromRow($row, $startcol);
-        if (null !== ($obj = DateOptionPeer::getInstanceFromPool($key))) {
+        $key = NotificationPeer::getPrimaryKeyHashFromRow($row, $startcol);
+        if (null !== ($obj = NotificationPeer::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $startcol, true); // rehydrate
-            $col = $startcol + DateOptionPeer::NUM_HYDRATE_COLUMNS;
-        } elseif (null == $key) {
-            // empty resultset, probably from a left join
-            // since this table is abstract, we can't hydrate an empty object
-            $obj = null;
-            $col = $startcol + DateOptionPeer::NUM_HYDRATE_COLUMNS;
+            $col = $startcol + NotificationPeer::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = DateOptionPeer::getOMClass($row, $startcol);
+            $cls = NotificationPeer::getOMClass($row, $startcol);
             $obj = new $cls();
             $col = $obj->hydrate($row, $startcol);
-            DateOptionPeer::addInstanceToPool($obj, $key);
+            NotificationPeer::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related DateOption table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinDateOption(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            NotificationPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+        // Set the correct dbName
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
     }
 
 
@@ -526,26 +573,26 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -577,26 +624,26 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -612,11 +659,80 @@ abstract class BaseDateOptionPeer
 
 
     /**
-     * Selects a collection of DateOption objects pre-filled with their Event objects.
+     * Selects a collection of Notification objects pre-filled with their DateOption objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of DateOption objects.
+     * @return array           Array of Notification objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinDateOption(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
+        }
+
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol = NotificationPeer::NUM_HYDRATE_COLUMNS;
+        DateOptionPeer::addSelectColumns($criteria);
+
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+
+                $omClass = NotificationPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
+            } // if $obj1 already loaded
+
+            $key2 = DateOptionPeer::getPrimaryKeyHashFromRow($row, $startcol);
+            if ($key2 !== null) {
+                $obj2 = DateOptionPeer::getInstanceFromPool($key2);
+                if (!$obj2) {
+
+                    $omClass = DateOptionPeer::getOMClass($row, $startcol);
+                    $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol);
+                    DateOptionPeer::addInstanceToPool($obj2, $key2);
+                } // if obj2 already loaded
+
+                // Add the $obj1 (Notification) to $obj2 (DateOption)
+                $obj2->addNotification($obj1);
+
+            } // if joined row was not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Notification objects pre-filled with their Event objects.
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Notification objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -626,32 +742,32 @@ abstract class BaseDateOptionPeer
 
         // Set the correct dbName if it has not been overridden
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
         }
 
-        DateOptionPeer::addSelectColumns($criteria);
-        $startcol = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol = NotificationPeer::NUM_HYDRATE_COLUMNS;
         EventPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
 
-                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $omClass = NotificationPeer::getOMClass($row, 0);
                 $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                DateOptionPeer::addInstanceToPool($obj1, $key1);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
             } // if $obj1 already loaded
 
             $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol);
@@ -667,8 +783,8 @@ abstract class BaseDateOptionPeer
                     EventPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 already loaded
 
-                // Add the $obj1 (DateOption) to $obj2 (Event)
-                $obj2->addDateOption($obj1);
+                // Add the $obj1 (Notification) to $obj2 (Event)
+                $obj2->addNotification($obj1);
 
             } // if joined row was not null
 
@@ -681,11 +797,11 @@ abstract class BaseDateOptionPeer
 
 
     /**
-     * Selects a collection of DateOption objects pre-filled with their MyUser objects.
+     * Selects a collection of Notification objects pre-filled with their MyUser objects.
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of DateOption objects.
+     * @return array           Array of Notification objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -695,32 +811,32 @@ abstract class BaseDateOptionPeer
 
         // Set the correct dbName if it has not been overridden
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
         }
 
-        DateOptionPeer::addSelectColumns($criteria);
-        $startcol = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol = NotificationPeer::NUM_HYDRATE_COLUMNS;
         MyUserPeer::addSelectColumns($criteria);
 
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
 
-                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $omClass = NotificationPeer::getOMClass($row, 0);
                 $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                DateOptionPeer::addInstanceToPool($obj1, $key1);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
             } // if $obj1 already loaded
 
             $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol);
@@ -735,8 +851,8 @@ abstract class BaseDateOptionPeer
                     MyUserPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 already loaded
 
-                // Add the $obj1 (DateOption) to $obj2 (MyUser)
-                $obj2->addDateOption($obj1);
+                // Add the $obj1 (Notification) to $obj2 (MyUser)
+                $obj2->addNotification($obj1);
 
             } // if joined row was not null
 
@@ -765,28 +881,30 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
 
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -801,12 +919,12 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * Selects a collection of DateOption objects pre-filled with all related objects.
+     * Selects a collection of Notification objects pre-filled with all related objects.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of DateOption objects.
+     * @return array           Array of Notification objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
@@ -816,75 +934,99 @@ abstract class BaseDateOptionPeer
 
         // Set the correct dbName if it has not been overridden
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
         }
 
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol2 = NotificationPeer::NUM_HYDRATE_COLUMNS;
+
         DateOptionPeer::addSelectColumns($criteria);
-        $startcol2 = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        $startcol3 = $startcol2 + DateOptionPeer::NUM_HYDRATE_COLUMNS;
 
         EventPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
+        $startcol4 = $startcol3 + EventPeer::NUM_HYDRATE_COLUMNS;
 
         MyUserPeer::addSelectColumns($criteria);
-        $startcol4 = $startcol3 + MyUserPeer::NUM_HYDRATE_COLUMNS;
+        $startcol5 = $startcol4 + MyUserPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
 
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
-                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $omClass = NotificationPeer::getOMClass($row, 0);
         $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                DateOptionPeer::addInstanceToPool($obj1, $key1);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
-            // Add objects for joined Event rows
+            // Add objects for joined DateOption rows
 
-            $key2 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+            $key2 = DateOptionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
             if ($key2 !== null) {
-                $obj2 = EventPeer::getInstanceFromPool($key2);
+                $obj2 = DateOptionPeer::getInstanceFromPool($key2);
                 if (!$obj2) {
 
-                    $omClass = EventPeer::getOMClass($row, $startcol2);
+                    $omClass = DateOptionPeer::getOMClass($row, $startcol2);
           $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                     $obj2 = new $cls();
                     $obj2->hydrate($row, $startcol2);
-                    EventPeer::addInstanceToPool($obj2, $key2);
+                    DateOptionPeer::addInstanceToPool($obj2, $key2);
                 } // if obj2 loaded
 
-                // Add the $obj1 (DateOption) to the collection in $obj2 (Event)
-                $obj2->addDateOption($obj1);
+                // Add the $obj1 (Notification) to the collection in $obj2 (DateOption)
+                $obj2->addNotification($obj1);
+            } // if joined row not null
+
+            // Add objects for joined Event rows
+
+            $key3 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+            if ($key3 !== null) {
+                $obj3 = EventPeer::getInstanceFromPool($key3);
+                if (!$obj3) {
+
+                    $omClass = EventPeer::getOMClass($row, $startcol3);
+          $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    EventPeer::addInstanceToPool($obj3, $key3);
+                } // if obj3 loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj3 (Event)
+                $obj3->addNotification($obj1);
             } // if joined row not null
 
             // Add objects for joined MyUser rows
 
-            $key3 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-            if ($key3 !== null) {
-                $obj3 = MyUserPeer::getInstanceFromPool($key3);
-                if (!$obj3) {
+            $key4 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+            if ($key4 !== null) {
+                $obj4 = MyUserPeer::getInstanceFromPool($key4);
+                if (!$obj4) {
 
                     $cls = MyUserPeer::getOMClass();
 
-                    $obj3 = new $cls();
-                    $obj3->hydrate($row, $startcol3);
-                    MyUserPeer::addInstanceToPool($obj3, $key3);
-                } // if obj3 loaded
+                    $obj4 = new $cls();
+                    $obj4->hydrate($row, $startcol4);
+                    MyUserPeer::addInstanceToPool($obj4, $key4);
+                } // if obj4 loaded
 
-                // Add the $obj1 (DateOption) to the collection in $obj3 (MyUser)
-                $obj3->addDateOption($obj1);
+                // Add the $obj1 (Notification) to the collection in $obj4 (MyUser)
+                $obj4->addNotification($obj1);
             } // if joined row not null
 
             $results[] = $obj1;
@@ -892,6 +1034,59 @@ abstract class BaseDateOptionPeer
         $stmt->closeCursor();
 
         return $results;
+    }
+
+
+    /**
+     * Returns the number of rows matching criteria, joining the related DateOption table
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return int Number of matching rows.
+     */
+    public static function doCountJoinAllExceptDateOption(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        // we're going to modify criteria, so copy it first
+        $criteria = clone $criteria;
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
+
+        if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+            $criteria->setDistinct();
+        }
+
+        if (!$criteria->hasSelectClause()) {
+            NotificationPeer::addSelectColumns($criteria);
+        }
+
+        $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+        // Set the correct dbName
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
+
+        if ($con === null) {
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+
+        $stmt = BasePeer::doCount($criteria, $con);
+
+        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $count = (int) $row[0];
+        } else {
+            $count = 0; // no rows returned; we infer that means 0 matches.
+        }
+        $stmt->closeCursor();
+
+        return $count;
     }
 
 
@@ -912,26 +1107,28 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY should not affect count
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -963,26 +1160,28 @@ abstract class BaseDateOptionPeer
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+        $criteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
 
         if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
             $criteria->setDistinct();
         }
 
         if (!$criteria->hasSelectClause()) {
-            DateOptionPeer::addSelectColumns($criteria);
+            NotificationPeer::addSelectColumns($criteria);
         }
 
         $criteria->clearOrderByColumns(); // ORDER BY should not affect count
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
 
         $stmt = BasePeer::doCount($criteria, $con);
 
@@ -998,16 +1197,16 @@ abstract class BaseDateOptionPeer
 
 
     /**
-     * Selects a collection of DateOption objects pre-filled with all related objects except Event.
+     * Selects a collection of Notification objects pre-filled with all related objects except DateOption.
      *
      * @param      Criteria  $criteria
      * @param      PropelPDO $con
      * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of DateOption objects.
+     * @return array           Array of Notification objects.
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExceptEvent(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public static function doSelectJoinAllExceptDateOption(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $criteria = clone $criteria;
 
@@ -1015,109 +1214,39 @@ abstract class BaseDateOptionPeer
         // $criteria->getDbName() will return the same object if not set to another value
         // so == check is okay and faster
         if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
         }
 
-        DateOptionPeer::addSelectColumns($criteria);
-        $startcol2 = DateOptionPeer::NUM_HYDRATE_COLUMNS;
-
-        MyUserPeer::addSelectColumns($criteria);
-        $startcol3 = $startcol2 + MyUserPeer::NUM_HYDRATE_COLUMNS;
-
-        $criteria->addJoin(DateOptionPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
-
-
-        $stmt = BasePeer::doSelect($criteria, $con);
-        $results = array();
-
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
-                // We no longer rehydrate the object, since this can cause data loss.
-                // See http://www.propelorm.org/ticket/509
-                // $obj1->hydrate($row, 0, true); // rehydrate
-            } else {
-                $omClass = DateOptionPeer::getOMClass($row, 0);
-                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-
-                $obj1 = new $cls();
-                $obj1->hydrate($row);
-                DateOptionPeer::addInstanceToPool($obj1, $key1);
-            } // if obj1 already loaded
-
-                // Add objects for joined MyUser rows
-
-                $key2 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-                if ($key2 !== null) {
-                    $obj2 = MyUserPeer::getInstanceFromPool($key2);
-                    if (!$obj2) {
-
-                        $cls = MyUserPeer::getOMClass();
-
-                    $obj2 = new $cls();
-                    $obj2->hydrate($row, $startcol2);
-                    MyUserPeer::addInstanceToPool($obj2, $key2);
-                } // if $obj2 already loaded
-
-                // Add the $obj1 (DateOption) to the collection in $obj2 (MyUser)
-                $obj2->addDateOption($obj1);
-
-            } // if joined row is not null
-
-            $results[] = $obj1;
-        }
-        $stmt->closeCursor();
-
-        return $results;
-    }
-
-
-    /**
-     * Selects a collection of DateOption objects pre-filled with all related objects except MyUser.
-     *
-     * @param      Criteria  $criteria
-     * @param      PropelPDO $con
-     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-     * @return array           Array of DateOption objects.
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function doSelectJoinAllExceptMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-    {
-        $criteria = clone $criteria;
-
-        // Set the correct dbName if it has not been overridden
-        // $criteria->getDbName() will return the same object if not set to another value
-        // so == check is okay and faster
-        if ($criteria->getDbName() == Propel::getDefaultDB()) {
-            $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
-        }
-
-        DateOptionPeer::addSelectColumns($criteria);
-        $startcol2 = DateOptionPeer::NUM_HYDRATE_COLUMNS;
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol2 = NotificationPeer::NUM_HYDRATE_COLUMNS;
 
         EventPeer::addSelectColumns($criteria);
         $startcol3 = $startcol2 + EventPeer::NUM_HYDRATE_COLUMNS;
 
-        $criteria->addJoin(DateOptionPeer::EVENTID, EventPeer::ID, $join_behavior);
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + MyUserPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
 
 
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $key1 = DateOptionPeer::getPrimaryKeyHashFromRow($row, 0);
-            if (null !== ($obj1 = DateOptionPeer::getInstanceFromPool($key1))) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj1->hydrate($row, 0, true); // rehydrate
             } else {
-                $omClass = DateOptionPeer::getOMClass($row, 0);
+                $omClass = NotificationPeer::getOMClass($row, 0);
                 $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 
                 $obj1 = new $cls();
                 $obj1->hydrate($row);
-                DateOptionPeer::addInstanceToPool($obj1, $key1);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
             } // if obj1 already loaded
 
                 // Add objects for joined Event rows
@@ -1135,8 +1264,228 @@ abstract class BaseDateOptionPeer
                     EventPeer::addInstanceToPool($obj2, $key2);
                 } // if $obj2 already loaded
 
-                // Add the $obj1 (DateOption) to the collection in $obj2 (Event)
-                $obj2->addDateOption($obj1);
+                // Add the $obj1 (Notification) to the collection in $obj2 (Event)
+                $obj2->addNotification($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined MyUser rows
+
+                $key3 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = MyUserPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = MyUserPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    MyUserPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj3 (MyUser)
+                $obj3->addNotification($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Notification objects pre-filled with all related objects except Event.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Notification objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptEvent(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
+        }
+
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol2 = NotificationPeer::NUM_HYDRATE_COLUMNS;
+
+        DateOptionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + DateOptionPeer::NUM_HYDRATE_COLUMNS;
+
+        MyUserPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + MyUserPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::USERNAME, MyUserPeer::NAME, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $omClass = NotificationPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined DateOption rows
+
+                $key2 = DateOptionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = DateOptionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $omClass = DateOptionPeer::getOMClass($row, $startcol2);
+            $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    DateOptionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj2 (DateOption)
+                $obj2->addNotification($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined MyUser rows
+
+                $key3 = MyUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = MyUserPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $cls = MyUserPeer::getOMClass();
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    MyUserPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj3 (MyUser)
+                $obj3->addNotification($obj1);
+
+            } // if joined row is not null
+
+            $results[] = $obj1;
+        }
+        $stmt->closeCursor();
+
+        return $results;
+    }
+
+
+    /**
+     * Selects a collection of Notification objects pre-filled with all related objects except MyUser.
+     *
+     * @param      Criteria  $criteria
+     * @param      PropelPDO $con
+     * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+     * @return array           Array of Notification objects.
+     * @throws PropelException Any exceptions caught during processing will be
+     *		 rethrown wrapped into a PropelException.
+     */
+    public static function doSelectJoinAllExceptMyUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $criteria = clone $criteria;
+
+        // Set the correct dbName if it has not been overridden
+        // $criteria->getDbName() will return the same object if not set to another value
+        // so == check is okay and faster
+        if ($criteria->getDbName() == Propel::getDefaultDB()) {
+            $criteria->setDbName(NotificationPeer::DATABASE_NAME);
+        }
+
+        NotificationPeer::addSelectColumns($criteria);
+        $startcol2 = NotificationPeer::NUM_HYDRATE_COLUMNS;
+
+        DateOptionPeer::addSelectColumns($criteria);
+        $startcol3 = $startcol2 + DateOptionPeer::NUM_HYDRATE_COLUMNS;
+
+        EventPeer::addSelectColumns($criteria);
+        $startcol4 = $startcol3 + EventPeer::NUM_HYDRATE_COLUMNS;
+
+        $criteria->addJoin(NotificationPeer::OPTION, DateOptionPeer::ID, $join_behavior);
+
+        $criteria->addJoin(NotificationPeer::EVENT_ID, EventPeer::ID, $join_behavior);
+
+
+        $stmt = BasePeer::doSelect($criteria, $con);
+        $results = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $key1 = NotificationPeer::getPrimaryKeyHashFromRow($row, 0);
+            if (null !== ($obj1 = NotificationPeer::getInstanceFromPool($key1))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // $obj1->hydrate($row, 0, true); // rehydrate
+            } else {
+                $omClass = NotificationPeer::getOMClass($row, 0);
+                $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                $obj1 = new $cls();
+                $obj1->hydrate($row);
+                NotificationPeer::addInstanceToPool($obj1, $key1);
+            } // if obj1 already loaded
+
+                // Add objects for joined DateOption rows
+
+                $key2 = DateOptionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+                if ($key2 !== null) {
+                    $obj2 = DateOptionPeer::getInstanceFromPool($key2);
+                    if (!$obj2) {
+
+                        $omClass = DateOptionPeer::getOMClass($row, $startcol2);
+            $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj2 = new $cls();
+                    $obj2->hydrate($row, $startcol2);
+                    DateOptionPeer::addInstanceToPool($obj2, $key2);
+                } // if $obj2 already loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj2 (DateOption)
+                $obj2->addNotification($obj1);
+
+            } // if joined row is not null
+
+                // Add objects for joined Event rows
+
+                $key3 = EventPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+                if ($key3 !== null) {
+                    $obj3 = EventPeer::getInstanceFromPool($key3);
+                    if (!$obj3) {
+
+                        $omClass = EventPeer::getOMClass($row, $startcol3);
+            $cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+
+                    $obj3 = new $cls();
+                    $obj3->hydrate($row, $startcol3);
+                    EventPeer::addInstanceToPool($obj3, $key3);
+                } // if $obj3 already loaded
+
+                // Add the $obj1 (Notification) to the collection in $obj3 (Event)
+                $obj3->addNotification($obj1);
 
             } // if joined row is not null
 
@@ -1156,7 +1505,7 @@ abstract class BaseDateOptionPeer
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(DateOptionPeer::DATABASE_NAME)->getTable(DateOptionPeer::TABLE_NAME);
+        return Propel::getDatabaseMap(NotificationPeer::DATABASE_NAME)->getTable(NotificationPeer::TABLE_NAME);
     }
 
     /**
@@ -1164,9 +1513,9 @@ abstract class BaseDateOptionPeer
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getDatabaseMap(BaseDateOptionPeer::DATABASE_NAME);
-      if (!$dbMap->hasTable(BaseDateOptionPeer::TABLE_NAME)) {
-        $dbMap->addTableObject(new \DateOptionTableMap());
+      $dbMap = Propel::getDatabaseMap(BaseNotificationPeer::DATABASE_NAME);
+      if (!$dbMap->hasTable(BaseNotificationPeer::TABLE_NAME)) {
+        $dbMap->addTableObject(new \NotificationTableMap());
       }
     }
 
@@ -1184,20 +1533,24 @@ abstract class BaseDateOptionPeer
         try {
 
             $omClass = null;
-            $classKey = $row[$colnum + 4];
+            $classKey = $row[$colnum + 5];
 
             switch ($classKey) {
 
-                case DateOptionPeer::CLASSKEY_STANDARD:
-                    $omClass = DateOptionPeer::CLASSNAME_STANDARD;
+                case NotificationPeer::CLASSKEY_OPTION_FIXED:
+                    $omClass = NotificationPeer::CLASSNAME_OPTION_FIXED;
                     break;
 
-                case DateOptionPeer::CLASSKEY_ONEONE:
-                    $omClass = DateOptionPeer::CLASSNAME_ONEONE;
+                case NotificationPeer::CLASSKEY_POLL_FINISHED:
+                    $omClass = NotificationPeer::CLASSNAME_POLL_FINISHED;
+                    break;
+
+                case NotificationPeer::CLASSKEY_STATUS_CHANGED:
+                    $omClass = NotificationPeer::CLASSNAME_STATUS_CHANGED;
                     break;
 
                 default:
-                    $omClass = DateOptionPeer::OM_CLASS;
+                    $omClass = NotificationPeer::OM_CLASS;
 
             } // switch
 
@@ -1209,9 +1562,9 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * Performs an INSERT on the database, given a DateOption or Criteria object.
+     * Performs an INSERT on the database, given a Notification or Criteria object.
      *
-     * @param      mixed $values Criteria or DateOption object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or Notification object containing data that is used to create the INSERT statement.
      * @param      PropelPDO $con the PropelPDO connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -1220,22 +1573,18 @@ abstract class BaseDateOptionPeer
     public static function doInsert($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from DateOption object
-        }
-
-        if ($criteria->containsKey(DateOptionPeer::ID) && $criteria->keyContainsValue(DateOptionPeer::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.DateOptionPeer::ID.')');
+            $criteria = $values->buildCriteria(); // build Criteria from Notification object
         }
 
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
@@ -1252,9 +1601,9 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * Performs an UPDATE on the database, given a DateOption or Criteria object.
+     * Performs an UPDATE on the database, given a Notification or Criteria object.
      *
-     * @param      mixed $values Criteria or DateOption object containing data that is used to create the UPDATE statement.
+     * @param      mixed $values Criteria or Notification object containing data that is used to create the UPDATE statement.
      * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
@@ -1263,35 +1612,43 @@ abstract class BaseDateOptionPeer
     public static function doUpdate($values, PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
-        $selectCriteria = new Criteria(DateOptionPeer::DATABASE_NAME);
+        $selectCriteria = new Criteria(NotificationPeer::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(DateOptionPeer::ID);
-            $value = $criteria->remove(DateOptionPeer::ID);
+            $comparison = $criteria->getComparison(NotificationPeer::ID);
+            $value = $criteria->remove(NotificationPeer::ID);
             if ($value) {
-                $selectCriteria->add(DateOptionPeer::ID, $value, $comparison);
+                $selectCriteria->add(NotificationPeer::ID, $value, $comparison);
             } else {
-                $selectCriteria->setPrimaryTableName(DateOptionPeer::TABLE_NAME);
+                $selectCriteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
             }
 
-        } else { // $values is DateOption object
+            $comparison = $criteria->getComparison(NotificationPeer::USERNAME);
+            $value = $criteria->remove(NotificationPeer::USERNAME);
+            if ($value) {
+                $selectCriteria->add(NotificationPeer::USERNAME, $value, $comparison);
+            } else {
+                $selectCriteria->setPrimaryTableName(NotificationPeer::TABLE_NAME);
+            }
+
+        } else { // $values is Notification object
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
 
         // set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
-     * Deletes all rows from the dateOptions table.
+     * Deletes all rows from the notifications table.
      *
      * @param      PropelPDO $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).
@@ -1300,20 +1657,19 @@ abstract class BaseDateOptionPeer
     public static function doDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
-            $affectedRows += DateOptionPeer::doOnDeleteCascade(new Criteria(DateOptionPeer::DATABASE_NAME), $con);
-            $affectedRows += BasePeer::doDeleteAll(DateOptionPeer::TABLE_NAME, $con, DateOptionPeer::DATABASE_NAME);
+            $affectedRows += BasePeer::doDeleteAll(NotificationPeer::TABLE_NAME, $con, NotificationPeer::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            DateOptionPeer::clearInstancePool();
-            DateOptionPeer::clearRelatedInstancePool();
+            NotificationPeer::clearInstancePool();
+            NotificationPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -1324,9 +1680,9 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * Performs a DELETE on the database, given a DateOption or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Notification or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or DateOption object or primary key or array of primary keys
+     * @param      mixed $values Criteria or Notification object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      PropelPDO $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -1337,22 +1693,40 @@ abstract class BaseDateOptionPeer
      public static function doDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
         }
 
         if ($values instanceof Criteria) {
+            // invalidate the cache for all objects of this type, since we have no
+            // way of knowing (without running a query) what objects should be invalidated
+            // from the cache based on this Criteria.
+            NotificationPeer::clearInstancePool();
             // rename for clarity
             $criteria = clone $values;
-        } elseif ($values instanceof DateOption) { // it's a model object
+        } elseif ($values instanceof Notification) { // it's a model object
+            // invalidate the cache for this single object
+            NotificationPeer::removeInstanceFromPool($values);
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(DateOptionPeer::DATABASE_NAME);
-            $criteria->add(DateOptionPeer::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(NotificationPeer::DATABASE_NAME);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            foreach ($values as $value) {
+                $criterion = $criteria->getNewCriterion(NotificationPeer::ID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(NotificationPeer::USERNAME, $value[1]));
+                $criteria->addOr($criterion);
+                // we can invalidate the cache for this single PK
+                NotificationPeer::removeInstanceFromPool($value);
+            }
         }
 
         // Set the correct dbName
-        $criteria->setDbName(DateOptionPeer::DATABASE_NAME);
+        $criteria->setDbName(NotificationPeer::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -1361,25 +1735,8 @@ abstract class BaseDateOptionPeer
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->beginTransaction();
 
-            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
-            $c = clone $criteria;
-            $affectedRows += DateOptionPeer::doOnDeleteCascade($c, $con);
-
-            // Because this db requires some delete cascade/set null emulation, we have to
-            // clear the cached instance *after* the emulation has happened (since
-            // instances get re-added by the select statement contained therein).
-            if ($values instanceof Criteria) {
-                DateOptionPeer::clearInstancePool();
-            } elseif ($values instanceof DateOption) { // it's a model object
-                DateOptionPeer::removeInstanceFromPool($values);
-            } else { // it's a primary key, or an array of pks
-                foreach ((array) $values as $singleval) {
-                    DateOptionPeer::removeInstanceFromPool($singleval);
-                }
-            }
-
             $affectedRows += BasePeer::doDelete($criteria, $con);
-            DateOptionPeer::clearRelatedInstancePool();
+            NotificationPeer::clearRelatedInstancePool();
             $con->commit();
 
             return $affectedRows;
@@ -1390,46 +1747,13 @@ abstract class BaseDateOptionPeer
     }
 
     /**
-     * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
-     * feature (like MySQL or SQLite).
-     *
-     * This method is not very speedy because it must perform a query first to get
-     * the implicated records and then perform the deletes by calling those Peer classes.
-     *
-     * This method should be used within a transaction if possible.
-     *
-     * @param      Criteria $criteria
-     * @param      PropelPDO $con
-     * @return int The number of affected rows (if supported by underlying database driver).
-     */
-    protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
-    {
-        // initialize var to track total num of affected rows
-        $affectedRows = 0;
-
-        // first find the objects that are implicated by the $criteria
-        $objects = DateOptionPeer::doSelect($criteria, $con);
-        foreach ($objects as $obj) {
-
-
-            // delete related Notification objects
-            $criteria = new Criteria(NotificationPeer::DATABASE_NAME);
-
-            $criteria->add(NotificationPeer::OPTION, $obj->getId());
-            $affectedRows += NotificationPeer::doDelete($criteria, $con);
-        }
-
-        return $affectedRows;
-    }
-
-    /**
-     * Validates all modified columns of given DateOption object.
+     * Validates all modified columns of given Notification object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param DateOption $obj The object to validate.
+     * @param Notification $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -1439,8 +1763,8 @@ abstract class BaseDateOptionPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(DateOptionPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(DateOptionPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(NotificationPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(NotificationPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -1456,65 +1780,35 @@ abstract class BaseDateOptionPeer
 
         }
 
-        return BasePeer::doValidate(DateOptionPeer::DATABASE_NAME, DateOptionPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(NotificationPeer::DATABASE_NAME, NotificationPeer::TABLE_NAME, $columns);
     }
 
     /**
-     * Retrieve a single object by pkey.
-     *
-     * @param int $pk the primary key.
-     * @param      PropelPDO $con the connection to use
-     * @return DateOption
+     * Retrieve object using using composite pkey values.
+     * @param   int $id
+     * @param   string $username
+     * @param      PropelPDO $con
+     * @return Notification
      */
-    public static function retrieveByPK($pk, PropelPDO $con = null)
-    {
-
-        if (null !== ($obj = DateOptionPeer::getInstanceFromPool((string) $pk))) {
-            return $obj;
+    public static function retrieveByPK($id, $username, PropelPDO $con = null) {
+        $_instancePoolKey = serialize(array((string) $id, (string) $username));
+         if (null !== ($obj = NotificationPeer::getInstanceFromPool($_instancePoolKey))) {
+             return $obj;
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+            $con = Propel::getConnection(NotificationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
         }
+        $criteria = new Criteria(NotificationPeer::DATABASE_NAME);
+        $criteria->add(NotificationPeer::ID, $id);
+        $criteria->add(NotificationPeer::USERNAME, $username);
+        $v = NotificationPeer::doSelect($criteria, $con);
 
-        $criteria = new Criteria(DateOptionPeer::DATABASE_NAME);
-        $criteria->add(DateOptionPeer::ID, $pk);
-
-        $v = DateOptionPeer::doSelect($criteria, $con);
-
-        return !empty($v) > 0 ? $v[0] : null;
+        return !empty($v) ? $v[0] : null;
     }
-
-    /**
-     * Retrieve multiple objects by pkey.
-     *
-     * @param      array $pks List of primary keys
-     * @param      PropelPDO $con the connection to use
-     * @return DateOption[]
-     * @throws PropelException Any exceptions caught during processing will be
-     *		 rethrown wrapped into a PropelException.
-     */
-    public static function retrieveByPKs($pks, PropelPDO $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(DateOptionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-        }
-
-        $objs = null;
-        if (empty($pks)) {
-            $objs = array();
-        } else {
-            $criteria = new Criteria(DateOptionPeer::DATABASE_NAME);
-            $criteria->add(DateOptionPeer::ID, $pks, Criteria::IN);
-            $objs = DateOptionPeer::doSelect($criteria, $con);
-        }
-
-        return $objs;
-    }
-
-} // BaseDateOptionPeer
+} // BaseNotificationPeer
 
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-BaseDateOptionPeer::buildTableMap();
+BaseNotificationPeer::buildTableMap();
 
