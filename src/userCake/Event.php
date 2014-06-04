@@ -5,7 +5,7 @@
  * @version 29.5.2014
  */
 
-/* TODO: notification implementation */l
+/* TODO: notification implementation */
 
 /* TODO: remove error reporting; error reporting is just for testing! */
 error_reporting(E_ALL); 
