@@ -66,6 +66,26 @@ CREATE TABLE `invitations`
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
+-- notifications
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `notifications`;
+
+CREATE TABLE `notifications`
+(
+    `id` INTEGER NOT NULL,
+    `status` INTEGER,
+    `option` INTEGER,
+    `event_id` INTEGER NOT NULL,
+    `username` VARCHAR(255) NOT NULL,
+    `class_key` VARCHAR(255),
+    PRIMARY KEY (`id`,`username`),
+    INDEX `notifications_FI_1` (`option`),
+    INDEX `notifications_FI_2` (`event_id`),
+    INDEX `notifications_FI_3` (`username`)
+) ENGINE=MyISAM;
+
+-- ---------------------------------------------------------------------
 -- comments
 -- ---------------------------------------------------------------------
 
