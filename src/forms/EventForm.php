@@ -58,7 +58,8 @@ class EventForm {
 				$this->displayParticipantOptions();
 				break;
 		}
-
+		
+		$this->comments();
 		$this->closeHtml();
 	}
 
@@ -301,6 +302,13 @@ class EventForm {
 		<script type='text/javascript' src='../bootstrap/js/bootstrap.min.js'></script>
 		<script type='text/javascript' src='../forms/Event.js'></script>
 		";
-	}	
+	}
+	
+	/**
+	 *Includes all comments
+	 */
+	private function comments() {
+		include 'CommentForm.php';
+	}
 }
 ?>
