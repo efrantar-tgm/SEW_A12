@@ -40,5 +40,23 @@ class StandardOption extends DateOption {
 
 		return $finished;
 	}
+	
+	/**
+	 * @see DateOption
+	 */
+	public function getPollStatus($user) {
+		$username = $user->getName();
+		if(is_null($this->getChoices()) || !key_exists($username, $this->getChoices())) {
+			return DateOption::NONE;
+		}
+		else {
+			if($this->getChoices()[$username]) {
+				return DateOption::ACCEPT;
+			}
+			else {
+				return DateOption::DECLINE;
+			}
+		}
+	}
 }
 ?>

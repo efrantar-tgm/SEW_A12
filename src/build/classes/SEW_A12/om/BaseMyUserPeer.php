@@ -361,6 +361,9 @@ abstract class BaseMyUserPeer
         // Invalidate objects in InvitationPeer instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         InvitationPeer::clearInstancePool();
+        // Invalidate objects in CommentPeer instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        CommentPeer::clearInstancePool();
     }
 
     /**
@@ -702,6 +705,12 @@ abstract class BaseMyUserPeer
 
             $criteria->add(InvitationPeer::USERNAME, $obj->getName());
             $affectedRows += InvitationPeer::doDelete($criteria, $con);
+
+            // delete related Comment objects
+            $criteria = new Criteria(CommentPeer::DATABASE_NAME);
+
+            $criteria->add(CommentPeer::USERNAME, $obj->getName());
+            $affectedRows += CommentPeer::doDelete($criteria, $con);
         }
 
         return $affectedRows;

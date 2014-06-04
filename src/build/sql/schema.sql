@@ -65,5 +65,23 @@ CREATE TABLE `invitations`
     INDEX `invitations_FI_2` (`eventId`)
 ) ENGINE=MyISAM;
 
+-- ---------------------------------------------------------------------
+-- comments
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `comments`;
+
+CREATE TABLE `comments`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `content` VARCHAR(255) NOT NULL,
+    `postTime` DATETIME NOT NULL,
+    `username` VARCHAR(255),
+    `eventid` INTEGER,
+    PRIMARY KEY (`id`),
+    INDEX `comments_FI_1` (`username`),
+    INDEX `comments_FI_2` (`eventid`)
+) ENGINE=MyISAM;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

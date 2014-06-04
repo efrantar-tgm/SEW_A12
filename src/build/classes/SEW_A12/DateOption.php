@@ -6,6 +6,10 @@
  */
 abstract class DateOption extends BaseDateOption
 {
+	const ACCEPT = 0;
+	const DECLINE = 1;
+	const NONE = 2;
+	
 	/**
 	 * Returns the date-option identified by the given id.
 	 * @param int the id of the option to find
@@ -29,5 +33,12 @@ abstract class DateOption extends BaseDateOption
      * @return boolean true if poll is finished; false otherwise
      */
 	public abstract function pollFinished($event);
+	
+	/**
+	 * Determines the poll status (accepted, declined, none) for the given user.
+	 * @param MyUser $user the user to determine the poll status from
+	 * @return int the poll status of the user (one of this class' constants)
+	 */
+	public abstract function getPollStatus($user);
 }
 ?>

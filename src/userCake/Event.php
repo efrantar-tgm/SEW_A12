@@ -5,10 +5,7 @@
  * @version 29.5.2014
  */
 
-/* TODO: poll implementation */
-/* TODO: fix-date implementation */
-/* TODO: notification implementation */
-/* TODO: comments + management implementation */
+/* TODO: notification implementation */l
 
 /* TODO: remove error reporting; error reporting is just for testing! */
 error_reporting(E_ALL); 

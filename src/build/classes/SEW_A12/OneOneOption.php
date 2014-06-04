@@ -19,10 +19,16 @@ class OneOneOption extends DateOption {
      * @see DateOption
      */
 		public function poll($user, $accept) {
-			if($accept) { // only care about accepting polls
-				if(is_empty($this->getUser())) { // do not override a previous user
-					$this->setUser($user);
-					return true; // success				
+			if(!$accept) {
+				if($user->getName() == $this->getUsername()) { // unpoll
+					$this->setUsername(null);
+				}
+				return true;
+			}
+			else {
+				if(empty($this->getUsername())) { // do not override a previous user
+					$this->setUsername($user->getName());
+					return true; // success			
 				}
 			}
 			return false; // it has already been polled before
@@ -32,6 +38,18 @@ class OneOneOption extends DateOption {
 		 * @see DateOption
 		 */
 		public function pollFinished($event) {
-			return !is_null($this->getUser());
+			return !is_null($this->getUsername());
+		}
+		
+		/**
+		 * @see DateOption
+		 */
+		public function getPollStatus($user) {
+			if($this->getUsername() == $user->getName()) {
+				return DateOption::ACCEPT;
+			}
+			else {
+				return DateOption::NONE;
+			}
 		}
 }

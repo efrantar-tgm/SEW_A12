@@ -48,6 +48,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
     protected $collInvitationsPartial;
 
     /**
+     * @var        PropelObjectCollection|Comment[] Collection to store aggregation of Comment objects.
+     */
+    protected $collComments;
+    protected $collCommentsPartial;
+
+    /**
      * @var        PropelObjectCollection|Event[] Collection to store aggregation of Event objects.
      */
     protected $collEvents;
@@ -89,6 +95,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $invitationsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var		PropelObjectCollection
+     */
+    protected $commentsScheduledForDeletion = null;
 
     /**
      * Get the [name] column value.
@@ -229,6 +241,8 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             $this->collDateOptions = null;
 
             $this->collInvitations = null;
+
+            $this->collComments = null;
 
             $this->collEvents = null;
         } // if (deep)
@@ -415,6 +429,23 @@ abstract class BaseMyUser extends BaseObject implements Persistent
                 }
             }
 
+            if ($this->commentsScheduledForDeletion !== null) {
+                if (!$this->commentsScheduledForDeletion->isEmpty()) {
+                    CommentQuery::create()
+                        ->filterByPrimaryKeys($this->commentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->commentsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collComments !== null) {
+                foreach ($this->collComments as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             $this->alreadyInSave = false;
 
         }
@@ -562,6 +593,14 @@ abstract class BaseMyUser extends BaseObject implements Persistent
                     }
                 }
 
+                if ($this->collComments !== null) {
+                    foreach ($this->collComments as $referrerFK) {
+                        if (!$referrerFK->validate($columns)) {
+                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+                        }
+                    }
+                }
+
 
             $this->alreadyInValidation = false;
         }
@@ -642,6 +681,9 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             }
             if (null !== $this->collInvitations) {
                 $result['Invitations'] = $this->collInvitations->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collComments) {
+                $result['Comments'] = $this->collComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -800,6 +842,12 @@ abstract class BaseMyUser extends BaseObject implements Persistent
                 }
             }
 
+            foreach ($this->getComments() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addComment($relObj->copy($deepCopy));
+                }
+            }
+
             //unflag object copy
             $this->startCopy = false;
         } // if ($deepCopy)
@@ -866,6 +914,9 @@ abstract class BaseMyUser extends BaseObject implements Persistent
         }
         if ('Invitation' == $relationName) {
             $this->initInvitations();
+        }
+        if ('Comment' == $relationName) {
+            $this->initComments();
         }
     }
 
@@ -1373,6 +1424,256 @@ abstract class BaseMyUser extends BaseObject implements Persistent
     }
 
     /**
+     * Clears out the collComments collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return MyUser The current object (for fluent API support)
+     * @see        addComments()
+     */
+    public function clearComments()
+    {
+        $this->collComments = null; // important to set this to null since that means it is uninitialized
+        $this->collCommentsPartial = null;
+
+        return $this;
+    }
+
+    /**
+     * reset is the collComments collection loaded partially
+     *
+     * @return void
+     */
+    public function resetPartialComments($v = true)
+    {
+        $this->collCommentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collComments collection.
+     *
+     * By default this just sets the collComments collection to an empty array (like clearcollComments());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initComments($overrideExisting = true)
+    {
+        if (null !== $this->collComments && !$overrideExisting) {
+            return;
+        }
+        $this->collComments = new PropelObjectCollection();
+        $this->collComments->setModel('Comment');
+    }
+
+    /**
+     * Gets an array of Comment objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this MyUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @return PropelObjectCollection|Comment[] List of Comment objects
+     * @throws PropelException
+     */
+    public function getComments($criteria = null, PropelPDO $con = null)
+    {
+        $partial = $this->collCommentsPartial && !$this->isNew();
+        if (null === $this->collComments || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collComments) {
+                // return empty collection
+                $this->initComments();
+            } else {
+                $collComments = CommentQuery::create(null, $criteria)
+                    ->filterByMyUser($this)
+                    ->find($con);
+                if (null !== $criteria) {
+                    if (false !== $this->collCommentsPartial && count($collComments)) {
+                      $this->initComments(false);
+
+                      foreach ($collComments as $obj) {
+                        if (false == $this->collComments->contains($obj)) {
+                          $this->collComments->append($obj);
+                        }
+                      }
+
+                      $this->collCommentsPartial = true;
+                    }
+
+                    $collComments->getInternalIterator()->rewind();
+
+                    return $collComments;
+                }
+
+                if ($partial && $this->collComments) {
+                    foreach ($this->collComments as $obj) {
+                        if ($obj->isNew()) {
+                            $collComments[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collComments = $collComments;
+                $this->collCommentsPartial = false;
+            }
+        }
+
+        return $this->collComments;
+    }
+
+    /**
+     * Sets a collection of Comment objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param PropelCollection $comments A Propel collection.
+     * @param PropelPDO $con Optional connection object
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function setComments(PropelCollection $comments, PropelPDO $con = null)
+    {
+        $commentsToDelete = $this->getComments(new Criteria(), $con)->diff($comments);
+
+
+        $this->commentsScheduledForDeletion = $commentsToDelete;
+
+        foreach ($commentsToDelete as $commentRemoved) {
+            $commentRemoved->setMyUser(null);
+        }
+
+        $this->collComments = null;
+        foreach ($comments as $comment) {
+            $this->addComment($comment);
+        }
+
+        $this->collComments = $comments;
+        $this->collCommentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Comment objects.
+     *
+     * @param Criteria $criteria
+     * @param boolean $distinct
+     * @param PropelPDO $con
+     * @return int             Count of related Comment objects.
+     * @throws PropelException
+     */
+    public function countComments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+    {
+        $partial = $this->collCommentsPartial && !$this->isNew();
+        if (null === $this->collComments || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collComments) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getComments());
+            }
+            $query = CommentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMyUser($this)
+                ->count($con);
+        }
+
+        return count($this->collComments);
+    }
+
+    /**
+     * Method called to associate a Comment object to this object
+     * through the Comment foreign key attribute.
+     *
+     * @param    Comment $l Comment
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function addComment(Comment $l)
+    {
+        if ($this->collComments === null) {
+            $this->initComments();
+            $this->collCommentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collComments->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddComment($l);
+
+            if ($this->commentsScheduledForDeletion and $this->commentsScheduledForDeletion->contains($l)) {
+                $this->commentsScheduledForDeletion->remove($this->commentsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param	Comment $comment The comment object to add.
+     */
+    protected function doAddComment($comment)
+    {
+        $this->collComments[]= $comment;
+        $comment->setMyUser($this);
+    }
+
+    /**
+     * @param	Comment $comment The comment object to remove.
+     * @return MyUser The current object (for fluent API support)
+     */
+    public function removeComment($comment)
+    {
+        if ($this->getComments()->contains($comment)) {
+            $this->collComments->remove($this->collComments->search($comment));
+            if (null === $this->commentsScheduledForDeletion) {
+                $this->commentsScheduledForDeletion = clone $this->collComments;
+                $this->commentsScheduledForDeletion->clear();
+            }
+            $this->commentsScheduledForDeletion[]= $comment;
+            $comment->setMyUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this MyUser is new, it will return
+     * an empty collection; or if this MyUser has previously
+     * been saved, it will retrieve related Comments from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in MyUser.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param PropelPDO $con optional connection object
+     * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return PropelObjectCollection|Comment[] List of Comment objects
+     */
+    public function getCommentsJoinEvent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    {
+        $query = CommentQuery::create(null, $criteria);
+        $query->joinWith('Event', $join_behavior);
+
+        return $this->getComments($query, $con);
+    }
+
+    /**
      * Clears out the collEvents collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -1598,6 +1899,11 @@ abstract class BaseMyUser extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collComments) {
+                foreach ($this->collComments as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collEvents) {
                 foreach ($this->collEvents as $o) {
                     $o->clearAllReferences($deep);
@@ -1615,6 +1921,10 @@ abstract class BaseMyUser extends BaseObject implements Persistent
             $this->collInvitations->clearIterator();
         }
         $this->collInvitations = null;
+        if ($this->collComments instanceof PropelCollection) {
+            $this->collComments->clearIterator();
+        }
+        $this->collComments = null;
         if ($this->collEvents instanceof PropelCollection) {
             $this->collEvents->clearIterator();
         }
