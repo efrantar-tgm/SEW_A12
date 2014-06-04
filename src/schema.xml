@@ -52,5 +52,21 @@
 			<reference local="eventId" foreign="id" />		
 		</foreign-key>
 	</table>
+	
+	<table name="comments" phpName="Comment">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="content" type="varchar" required="true" />
+		<column name="postTime" type="timestamp" required="true" />
+		
+		<column name="username" type="varchar" />
+		<foreign-key foreignTable="users" onDelete="cascade">
+			<reference local="username" foreign="name" />		
+		</foreign-key>
+
+		<column name="eventid" type="integer" />		
+		<foreign-key foreignTable="events" onDelete="cascade">
+			<reference local="eventid" foreign="id" />		
+		</foreign-key>		
+	</table>
 
 </database>

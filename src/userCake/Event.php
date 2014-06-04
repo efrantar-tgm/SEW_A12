@@ -55,6 +55,22 @@ if(isset($_POST["action"])) {
 				$event->save();
 			}
 			break;
+		
+		case "POST_COMMENT":
+			$comment = new Comment();
+			$comment->setContent($_POST["content"]);
+			$comment->setPosttime($_SERVER['REQUEST_TIME']);
+			$comment->setUsername($user->getName());
+			$comment->setEventid($event->getId());
+			$comment->save();
+			break;
+
+		case "REMOVE_COMMENT":
+			$comment = CommentQuery::create()
+  				->findPk($_POST['to_delete']);
+			$comment->delete();
+			break;
+			
 	}
 }
 
