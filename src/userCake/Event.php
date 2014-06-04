@@ -18,6 +18,8 @@ ini_set("display_errors", "1");
 require_once("models/config.php");
 require_once("../PropelInit.php");
 require_once("../forms/EventForm.php");
+require_once("../forms/StandardEventForm.php");
+require_once("../forms/OneOneEventForm.php");
 require_once("../forms/EventSettingsForm.php");
 require_once("../access_control/Role.php");
 
@@ -58,22 +60,34 @@ if(isset($_POST["action"])) {
 
 if(isset($_POST["save"])) {
 	$options = DateOptionQuery::create()
-		-> filterByEvent($event)
-		-> orderByDate()
-		-> find();
+	-> filterByEvent($event)
+	-> orderByDate()
+	-> find();
 	
-	for($i = 0;$i < count($options);$i++) {
-		switch($_POST["poll".$i]) {
-		case "OK":
-			$state = true;
-			break;
-		case "DECLINE":
-			$state = false;
-			break;
+	if($event instanceof StandardEvent) {	
+		for($i = 0;$i < count($options);$i++) {
+			switch($_POST["poll".$i]) {
+			case "OK":
+				$state = true;
+				break;
+			case "DECLINE":
+				$state = false;
+				break;
+			default:
+				$state = null;
+			}
+	
+			if(isset($state)) {
+				$role->getPermission(Permission::POLL)->poll($options[$i], $state);
+			}
 		}
-
-		if(isset($state)) {
-			$role->getPermission(Permission::POLL)->poll($options[$i], $state);
+	}
+	if($event instanceof OneOneEvent) {
+		if(isset($_POST["poll"])) {
+			foreach($options as $option) {
+				$state = $option->getId() == $_POST["poll"];
+				$role->getPermission(Permission::POLL)->poll($option, $state);
+			}
 		}
 	}
 	
@@ -82,6 +96,12 @@ if(isset($_POST["save"])) {
 }
 
 /* this was neither an AJAX-request or a form submission, so just load the UI */
-$form = new EventForm($event, $user);
-$form->show();
+if($event instanceof StandardEvent) {
+	$form = new StandardEventForm($event, $user);
+	$form->show();
+}
+if($event instanceof OneOneEvent) {
+	$form = new OneOneEventForm($event, $user);
+	$form->show();
+}
 ?>

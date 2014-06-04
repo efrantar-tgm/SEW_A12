@@ -171,8 +171,15 @@ class EventForm {
 
 			echo "<tbody>";
 			foreach($usernames as $username) {
-				if($username != $this->user->getName() || ($this->event->getFixed() && $this->role == Event::PARTICIPANT)) { // do not show yourself in the table
-					echo "<tr><td>$username</td>";
+				if(($username != $this->user->getName() || ($this->event->getFixed() && $this->role == Event::PARTICIPANT)) 
+				   && $this->event->getRole(MyUser::findByName($username)) != Event::ORGANIZER) { // do not show yourself in the table
+					
+					if($username == $this->user->getName()) {
+						echo "<tr><td><b>You</b></td>";
+					}
+					else {
+						echo "<tr><td>$username</td>";
+					}
 					
 					foreach($options as $option) {
 						if($option instanceof StandardOption) {
@@ -241,7 +248,7 @@ class EventForm {
 						<td align='center'>
 							<div class='btn-group' data-toggle='buttons'>
 							  <label class='btn btn-default'>
-							    <input type='radio' name='poll$i' value='OK'>
+							    <input type='radio' name='poll$i' value='OK' onClick='handle>
 								<span class='glyphicon glyphicon-ok' style='color: 47a446;'></span>	
 							  </label>
 							</div>
