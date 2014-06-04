@@ -27,48 +27,48 @@ class EventListForm {
 	 * Shows all fetched Events
 	 */
 	public function show(){
-		echo "			
-			<form action='../userCake/EventList.php' method='post'>
-    		<input type='submit' name='createEvent' value='New Event'>
-			</form>
-			";
+		echo "
+		<link href='../bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+		<link href='../../style/bs_callouts.css' rel='stylesheet'>
+		";
 
-		echo "<div class='header'> Meine Events 
-			</div><br />
-			 ";
-			 
+		echo"<div class='container'>";
+
+		echo "
+		<div>
+		<h3>Meine Events</h3>
+		<form action='../userCake/EventList.php' method='post'>
+			<button type='submit' name='createEvent' class='btn btn-primary'>New Event</button>
+		</form>
+		</div>
+		<br />";
 		for($i = 0; $i < count($this->invited) ; $i++){
-			echo '<table width="50%" border="1px" bordercolor="#FFFFFF">
-				  	<td class="zelle">
-						<a class="event" style="color: #54A34A;" href="../userCake/Event.php?id='.$this->invited[$i]->getId().'">'
-							.$this->invited[$i]->getName().'
-						</a>
-						</td>
-						</table>
-			
-						<hr color="#AAAAAA" width="50%" align="left"/>
-				   ';
+			echo '
+			<div class="panel panel-info">
+			<table class="table">
+		  		<td>
+				<a href="../userCake/Event.php?id='.$this->invited[$i]->getId().'">'.$this->invited[$i]->getName().'</a>
+				</td>
+			</table>
+			</div>';
 		}
 	
-		echo '<br /><hr color="#000000" size="1px"/><br />
-
-	
-		<div class="header"> Events an denen ich teilnehme </div>
+		echo '
+		<br />
+		<h3>Events an denen ich teilnehme </h3>
 		<br />
 		';
 
 		for($e = 0; $e < count($this->my_events) ; $e++){
-			echo '<table width="50%">
-				  	<td class="zelle">
-						<a class="event" style="color: #584A84;" href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'
-							.$this->my_events[$e]->getName().'
-						</a>
-						</td>
-						</table>
-			
-						<hr color="#AAAAAA" width="50%" align="left"/>
-					 ';
+			echo '
+			<div class="panel panel-success">
+			<table class="table">
+		  		<td>
+				<a href="../userCake/Event.php?id='.$this->my_events[$e]->getId().'">'.$this->my_events[$e]->getName().'</a>
+			</table>
+			</div>';
 		}
+		echo '</div>';
 	}
 }
 ?>
